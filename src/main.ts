@@ -6,7 +6,7 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 
-const endpoint = "https://localhost:8080"
+const endpoint = "https://seeker-backend.clo5de.info"
 const app = createApp(App);
 app.provide('endpoint', endpoint)
 
