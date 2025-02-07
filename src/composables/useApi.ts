@@ -13,14 +13,12 @@ export function useApi(isOAuthRequest?: boolean) {
     axiosInstance.interceptors.response.use(
       (response) => response,
       async (err) => {
-        console.log(err)
         const originalRequest = err.config
         if (
           err.response.status == 401
           && err.response.data.detail == "Expired token."
           && !originalRequest._retry
         ) {
-          console.log(123)
           authStore.refresh()
           originalRequest._retry = true
           return axiosInstance.request(originalRequest)
