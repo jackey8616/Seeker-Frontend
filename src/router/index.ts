@@ -19,6 +19,12 @@ const router = createRouter({
       component: () => import("../views/MailView.vue"),
     },
     {
+      path: "/mail-fitness/:thread_id",
+      name: 'mail-fitness',
+      component: () => import("../views/MailFitnessView.vue"),
+      props: true,
+    },
+    {
       path: "/user",
       name: "user",
       component: () => import("../views/UserView.vue"),
