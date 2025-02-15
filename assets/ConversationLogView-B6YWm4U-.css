@@ -1,0 +1,1 @@
+.tab{padding:20px}.tab-title{display:flex}.tab-title li{list-style:none;padding:10px}.tab-title li a{display:block;padding:10px;color:#333;background-color:#ccc;text-decoration:none}.tab-title li.active a{color:#fff;background-color:#0071bc}.tab-inner{padding:10px;border:1px solid #ccc}
