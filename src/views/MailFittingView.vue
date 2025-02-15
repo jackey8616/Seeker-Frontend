@@ -13,13 +13,15 @@ const invoke_results = ref()
 async function invoke_ai(thread_id: string) {
   invoke_debounce.value = true
   const response = await axios.value.post(
-    `/mails/fitness_by_ai/${thread_id}`,
+    `/mails/fitting_by_ai/${thread_id}`,
     {
       restriction: restriction.value,
       resume: resume.value,
     },
   )
-  invoke_debounce.value = false
+  .then((response) => response)
+  .catch((error) => error)
+  .finally(() => invoke_debounce.value = false)
   invoke_results.value = response.data.result
 }
 </script>
@@ -35,7 +37,7 @@ async function invoke_ai(thread_id: string) {
     <hr>
     <div v-for="result in invoke_results" v-bind:key="result.link">
       <label>Link</label><a :href="result.link">{{ result.link }}</a><br>
-      <label>Fitness</label>
+      <label>Fitting</label>
       <textarea :value="result.response" style="width: 100%; height: 15vh;"></textarea>
     </div>
   </div>

@@ -51,8 +51,8 @@ onMounted(async () => {
       :items="mails"
     >
       <template #expand="{ detailMail }">
-        <router-link :to="{ name: 'mail-fitness', params: { thread_id: detailMail.id }}" v-slot="{ navigate }" custom>
-          <button @click="navigate">AI Fitness</button>
+        <router-link :to="{ name: 'mail-fitting', params: { thread_id: detailMail.id }}" v-slot="{ navigate }" custom>
+          <button @click="navigate">Fitting by AI</button>
         </router-link>
         <iframe
           v-if="detailMail.extracted_data"

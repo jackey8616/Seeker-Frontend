@@ -11,17 +11,17 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/mail",
-      name: "mail",
+      path: "/mails",
+      name: "mails",
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/MailView.vue"),
+      component: () => import("../views/MailListView.vue"),
     },
     {
-      path: "/mail-fitness/:thread_id",
-      name: 'mail-fitness',
-      component: () => import("../views/MailFitnessView.vue"),
+      path: "/mail-fitting/:thread_id",
+      name: 'mail-fitting',
+      component: () => import("../views/MailFittingView.vue"),
       props: true,
     },
     {
