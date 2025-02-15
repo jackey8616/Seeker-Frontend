@@ -29,6 +29,17 @@ const router = createRouter({
       name: "user",
       component: () => import("../views/UserView.vue"),
     },
+    {
+      path: "/conversation-logs",
+      name: "conversation-logs",
+      component: () => import("../views/ConversationLogListView.vue"),
+    },
+    {
+      path: "/conversation-log/:conversation_log_id",
+      name: 'conversation-log',
+      component: () => import("../views/ConversationLogView.vue"),
+      props: true,
+    },
   ],
 });
 

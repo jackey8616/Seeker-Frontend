@@ -3,11 +3,11 @@ import { ref } from 'vue';
 
 import { useApi } from '@/composables/useApi';
 
+const props = defineProps<{ thread_id: string }>()
 const { axios } = useApi()
 const invoke_debounce = ref(false)
 const restriction = ref('')
 const resume = ref('')
-const props = defineProps<{ thread_id: string }>()
 const invoke_results = ref()
 
 async function invoke_ai(thread_id: string) {
