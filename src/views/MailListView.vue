@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import type { Header, Item } from 'vue3-easy-data-table';
+import { useDate } from 'vuetify'
 import { useApi } from '@/composables/useApi'
 
+const date = useDate()
 const { axios } = useApi()
 const headers = ref<Header[]>([
   { text: 'Action', value: 'action' },
   { text: 'Sender', value: 'sender' },
   { text: 'Title', value: 'title' },
-  { text: 'Snippet', value: 'snippet' },
   { text: 'Date', value: 'date' },
 ])
 const mails = ref<Item[]>([])
@@ -52,6 +53,7 @@ onMounted(async () => {
     >
       <template #item-action="{ detailMail }">
         <router-link
+          v-if="detailMail !== undefined"
           :to="{ name: 'mail-fitting', params: { thread_id: detailMail.id } }"
           v-slot="{ navigate }"
           custom
@@ -61,6 +63,12 @@ onMounted(async () => {
             <v-tooltip activator="parent" location="bottom">Fitting By AI</v-tooltip>
           </v-btn>
         </router-link>
+      </template>
+      <template #item-date="{ date: created_at }">
+        <v-chip size="x-small">
+          {{  date.format(created_at, 'keyboardDateTime24h') }}
+          <v-tooltip activator="parent" location="bottom">{{  created_at  }}</v-tooltip>
+        </v-chip>
       </template>
       <template #expand="{ detailMail }">
         <iframe

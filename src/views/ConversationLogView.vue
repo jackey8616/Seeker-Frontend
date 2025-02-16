@@ -38,7 +38,7 @@ function tabChat() {
 <template>
   <div v-if="log">
     <label>System Instructions</label>
-    <textarea :value="systemInstruction(log)" style="width: 100%; height: 40vh;"></textarea>
+    <v-textarea :value="systemInstruction(log)" style="width: 100%; height: 40vh;"></v-textarea>
     <label>Jobs</label>
     <div class="tab">
       <!-- tab標籤列 -->
@@ -59,13 +59,13 @@ function tabChat() {
           <label>Location {{ tabChat().json_input.location }}</label><br>
           <label>Salary {{ tabChat().json_input.salary }}</label><br>
           <label>WorkType {{ tabChat().json_input.work_type }}</label><br>
-          <textarea :value="tabChat().json_input.details" style="width: 100%; height: 20vh;"></textarea><br>
+          <v-textarea :value="tabChat().json_input.details" style="width: 100%; height: 20vh;"></v-textarea><br>
           <br>
           <label>Started at {{ tabChat().start_datetime }}</label><br>
           <label>Ended at {{ tabChat().end_datetime }}</label><br>
           <label>Input Token {{ tabChat().input_token }}</label><br>
           <label>Output Token {{ tabChat().output_token }}</label><br>
-          <textarea :value="tabChat().output" style="width: 100%; height: 40vh;"></textarea>
+          <v-textarea :value="tabChat().output" style="width: 100%; height: 40vh;"></v-textarea>
         </div>
       </div>
     </div>

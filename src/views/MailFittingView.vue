@@ -30,7 +30,7 @@ async function invoke_ai(thread_id: string) {
   <div>
     <label>Thread</label> {{ props.thread_id }}<br>
     <input v-model="restriction" placeholder="Restriction"/><br>
-    <textarea v-model="resume" placeholder="Resume" style="width: 100%; height: 20vh;"></textarea><br>
+    <v-textarea v-model="resume" placeholder="Resume" style="width: 100%; height: 20vh;"></v-textarea><br>
     <v-btn
       @click="invoke_ai(props.thread_id)"
       prepend-icon="$ai"
@@ -42,7 +42,7 @@ async function invoke_ai(thread_id: string) {
     <div v-for="result in invoke_results" v-bind:key="result.link">
       <label>Link</label><a :href="result.link">{{ result.link }}</a><br>
       <label>Fitting</label>
-      <textarea :value="result.response" style="width: 100%; height: 15vh;"></textarea>
+      <v-textarea :value="result.response" style="width: 100%; height: 15vh;"></v-textarea>
     </div>
   </div>
 </template>
