@@ -19,8 +19,17 @@ dependencies:
   vue3-google-login:
     specifier: ^2.0.33
     version: 2.0.33(vue@3.5.13)
+  vuetify:
+    specifier: ^3.7.12
+    version: 3.7.12(typescript@5.7.3)(vue@3.5.13)
 
 devDependencies:
+  '@mdi/font':
+    specifier: ^7.4.47
+    version: 7.4.47
+  '@mdi/js':
+    specifier: ^7.4.47
+    version: 7.4.47
   '@playwright/test':
     specifier: ^1.49.1
     version: 1.49.1
@@ -822,6 +831,14 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+    dev: true
+
+  /@mdi/font@7.4.47:
+    resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
+    dev: true
+
+  /@mdi/js@7.4.47:
+    resolution: {integrity: sha512-KPnNOtm5i2pMabqZxpUz7iQf+mfrYZyKCZ8QNz85czgEt7cuHcGorWfdzUMWYA0SD+a6Hn4FmJ+YhzzzjkTZrQ==}
     dev: true
 
   /@nodelib/fs.scandir@2.1.5:
@@ -3980,6 +3997,26 @@ packages:
       '@vue/server-renderer': 3.5.13(vue@3.5.13)
       '@vue/shared': 3.5.13
       typescript: 5.7.3
+
+  /vuetify@3.7.12(typescript@5.7.3)(vue@3.5.13):
+    resolution: {integrity: sha512-cBxWXKPNl3vWc10/EEpfK4RBrCZERAHEUZCWmrJPd6v+JU0sbm4sEgIpy8IU5d1BzA1kIhknpbgYy2IqiZponA==}
+    engines: {node: ^12.20 || >=14.13}
+    peerDependencies:
+      typescript: '>=4.7'
+      vite-plugin-vuetify: '>=1.0.0'
+      vue: ^3.3.0
+      webpack-plugin-vuetify: '>=2.0.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vite-plugin-vuetify:
+        optional: true
+      webpack-plugin-vuetify:
+        optional: true
+    dependencies:
+      typescript: 5.7.3
+      vue: 3.5.13(typescript@5.7.3)
+    dev: false
 
   /w3c-xmlserializer@5.0.0:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}

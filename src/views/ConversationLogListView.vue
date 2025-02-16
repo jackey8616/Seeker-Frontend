@@ -6,7 +6,7 @@ import { useApi } from '@/composables/useApi'
 
 const { axios } = useApi()
 const headers = ref<Header[]>([
-  { text: 'Detail', value: 'detail' },
+  { text: 'Action', value: 'action' },
   { text: 'Model', value: 'model_name'},
   { text: 'TotalInputToken', value: 'total_input_token'},
   { text: 'TotalOutputToken', value: 'total_output_token'},
@@ -28,13 +28,16 @@ onMounted(async () => {
       :headers="headers"
       :items="logs"
     >
-      <template #item-detail="{ _id }">
+      <template #item-action="{ _id }">
         <router-link
           :to="{ name: 'conversation-log', params: { conversation_log_id: _id } }"
           v-slot="{ navigate }"
           custom
         >
-          <button @click="navigate">Detail</button>
+          <v-btn icon size="x-small" @click="navigate">
+            <v-icon icon="$information" />
+            <v-tooltip activator="parent" location="bottom">Detail</v-tooltip>
+          </v-btn>
         </router-link>
       </template>
     </EasyDataTable>

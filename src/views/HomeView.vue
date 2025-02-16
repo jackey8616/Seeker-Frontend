@@ -8,6 +8,10 @@ const authStore = useAuthStore()
 <template>
   <div>
     <GoogleOAuthBtn></GoogleOAuthBtn>
-    <button v-if="authStore.isLogin()" type="button" @click="authStore.logout()">Logout</button>
+    <v-btn
+      v-if="authStore.isLogin()"
+      prepend-icon="$logout"
+      @click="authStore.logout()"
+    >Logout</v-btn>
   </div>  
 </template>

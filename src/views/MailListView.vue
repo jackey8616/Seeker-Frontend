@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useApi } from '@/composables/useApi'
+import { onMounted, ref } from 'vue';
 import type { Header, Item } from 'vue3-easy-data-table';
-import { onMounted } from 'vue';
-import { ref } from 'vue';
+import { useApi } from '@/composables/useApi'
 
 const { axios } = useApi()
 const headers = ref<Header[]>([
+  { text: 'Action', value: 'action' },
   { text: 'Sender', value: 'sender' },
   { text: 'Title', value: 'title' },
   { text: 'Snippet', value: 'snippet' },
@@ -50,10 +50,19 @@ onMounted(async () => {
       :headers="headers"
       :items="mails"
     >
-      <template #expand="{ detailMail }">
-        <router-link :to="{ name: 'mail-fitting', params: { thread_id: detailMail.id }}" v-slot="{ navigate }" custom>
-          <button @click="navigate">Fitting by AI</button>
+      <template #item-action="{ detailMail }">
+        <router-link
+          :to="{ name: 'mail-fitting', params: { thread_id: detailMail.id } }"
+          v-slot="{ navigate }"
+          custom
+        >
+          <v-btn icon size="x-small" @click="navigate">
+            <v-icon icon="$ai" />
+            <v-tooltip activator="parent" location="bottom">Fitting By AI</v-tooltip>
+          </v-btn>
         </router-link>
+      </template>
+      <template #expand="{ detailMail }">
         <iframe
           v-if="detailMail.extracted_data"
           :src="embedHtml(detailMail.extracted_data)"

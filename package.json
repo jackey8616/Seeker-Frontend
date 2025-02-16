@@ -22,9 +22,12 @@
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vue3-easy-data-table": "^1.5.47",
-    "vue3-google-login": "^2.0.33"
+    "vue3-google-login": "^2.0.33",
+    "vuetify": "^3.7.12"
   },
   "devDependencies": {
+    "@mdi/font": "^7.4.47",
+    "@mdi/js": "^7.4.47",
     "@playwright/test": "^1.49.1",
     "@tsconfig/node22": "^22.0.0",
     "@types/jsdom": "^21.1.7",

@@ -31,7 +31,11 @@ async function invoke_ai(thread_id: string) {
     <label>Thread</label> {{ props.thread_id }}<br>
     <input v-model="restriction" placeholder="Restriction"/><br>
     <textarea v-model="resume" placeholder="Resume" style="width: 100%; height: 20vh;"></textarea><br>
-    <button @click="invoke_ai(props.thread_id)" :disabled="invoke_debounce">AI Invoke</button>
+    <v-btn
+      @click="invoke_ai(props.thread_id)"
+      prepend-icon="$ai"
+      :disabled="invoke_debounce"
+    >AI Invoke</v-btn>
     <br>
     <br>
     <hr>
