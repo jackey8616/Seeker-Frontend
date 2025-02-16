@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-
+import { useDate } from 'vuetify'
 import { useApi } from '@/composables/useApi'
 
 const props = defineProps<{ conversation_log_id: string }>()
+const date = useDate();
 const { axios } = useApi()
-const tabId = ref(1)
+const tabId = ref(-1)
 const log = ref()
 
 onMounted(async () => {
@@ -25,83 +26,54 @@ onMounted(async () => {
 function systemInstruction(log: { system_instruction: string[]; }) {
   return log.system_instruction.join("\n")
 }
-
-function changeTab(idx: number) {
-  tabId.value = idx
-}
-
-function tabChat() {
-  return log.value.chats[tabId.value]
-}
 </script>
 
 <template>
   <div v-if="log">
-    <label>System Instructions</label>
-    <v-textarea :value="systemInstruction(log)" style="width: 100%; height: 40vh;"></v-textarea>
-    <label>Jobs</label>
-    <div class="tab">
-      <!-- tab標籤列 -->
-      <ul class="tab-title">
-        <li
-          v-for="(chat, idx) in log.chats"
-          :class="{ 'active': tabId == idx }"
-          @click="changeTab(idx)"
-        >
-          <a href="javascript:;" :data-tablink="`tab-${idx}`">Job {{ idx + 1 }}</a>
-        </li>
-      </ul>
-      <!-- tab內容 -->
-      <div class="tab-inner-wrap">
-        <div v-if="log.chats.length > 0" class="tab-inner">
-          <a :href="tabChat().json_input.link" target="_blank">Link</a><br>
-          <label>Title {{ tabChat().json_input.title }}</label><br>
-          <label>Location {{ tabChat().json_input.location }}</label><br>
-          <label>Salary {{ tabChat().json_input.salary }}</label><br>
-          <label>WorkType {{ tabChat().json_input.work_type }}</label><br>
-          <v-textarea :value="tabChat().json_input.details" style="width: 100%; height: 20vh;"></v-textarea><br>
-          <br>
-          <label>Started at {{ tabChat().start_datetime }}</label><br>
-          <label>Ended at {{ tabChat().end_datetime }}</label><br>
-          <label>Input Token {{ tabChat().input_token }}</label><br>
-          <label>Output Token {{ tabChat().output_token }}</label><br>
-          <v-textarea :value="tabChat().output" style="width: 100%; height: 40vh;"></v-textarea>
-        </div>
+    <v-card>
+      <v-toolbar title="ConversationLog" />
+      <div class="d-flex flex-row" style="height: 100vh;">
+        <v-tabs v-model="tabId" direction="vertical">
+          <v-tab value="-1" prepend-icon="$gear">Setup</v-tab>
+          <v-tab
+            prepend-icon="$briefcase"
+            v-for="(_, idx) in log.chats"
+            :value="idx"
+          >Job {{ idx + 1}}</v-tab>
+        </v-tabs>
+        <v-tabs-window v-model="tabId" class="flex-grow-1">
+          <v-tabs-window-item value="-1">
+            <h3>System Instruction</h3>
+            <v-textarea :value="systemInstruction(log)" style="width: 100%; height: 80vh;"></v-textarea>
+          </v-tabs-window-item>
+          <v-tabs-window-item v-for="(chat, idx) in log.chats" :value="idx">
+            <v-text-field readonly :model-value="chat.json_input.title" label="Title" variant="underlined">
+                <template v-slot:append>
+                <v-btn >
+                  <a :href="chat.json_input.link" target="_blank">Link</a>
+                  <v-tooltip activator="parent" location="bottom">Open job in another tab</v-tooltip>
+                </v-btn>
+                </template>
+            </v-text-field>
+            <v-text-field readonly :model-value="chat.json_input.location" label="Location" variant="underlined" />
+            <v-text-field readonly :model-value="chat.json_input.salary" label="Salary" variant="underlined" />
+            <v-text-field readonly :model-value="chat.json_input.work_type" label="WorkType" variant="underlined" />
+            <v-textarea readonly :model-value="chat.json_input.details" label="Details" style="width: 100%; height: 20vh;" />
+            <br>
+            <v-text-field
+              readonly
+              :model-value="`${date.format(chat.start_datetime, 'keyboardDateTime24h')}  ~  ${date.format(chat.end_datetime, 'keyboardDateTime24h')}`"
+              label="AI runs / ends @"
+              variant="underlined" />
+            <v-text-field
+              readonly
+              :model-value="`${chat.input_token}  /  ${chat.output_token}`"
+              label="Input / Output tokens"
+              variant="underlined" />
+            <v-textarea readonly :model-value="chat.output" label="AI Output" style="width: 100%; height: 40vh;"></v-textarea>
+          </v-tabs-window-item>
+        </v-tabs-window>
       </div>
-    </div>
+    </v-card>
   </div>
 </template>
-
-<style>
-.tab {
-  padding: 20px;
-}
-
-.tab-title {
-  display: flex;
-}
-
-.tab-title li {
-  list-style: none;
-  padding: 10px;
-}
-
-.tab-title li a {
-  display: block;
-  padding: 10px;
-  color: #333;
-  background-color: #ccc;
-  text-decoration: none;
-}
-
-.tab-title li.active a {
-  color: #fff;
-  background-color: #0071bc;
-}
-
-.tab-inner {
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-</style>

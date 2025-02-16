@@ -10,7 +10,7 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import { mdiBrain, mdiGoogle, mdiInformationOutline, mdiLogout } from '@mdi/js'
+import { mdiBrain, mdiBriefcase, mdiCog, mdiGoogle, mdiInformationOutline, mdiLogout } from '@mdi/js'
 import '@mdi/font/css/materialdesignicons.css'
 
 import Vue3EasyDataTable from 'vue3-easy-data-table';
@@ -26,6 +26,9 @@ const endpoint = "https://seeker-backend.clo5de.info"
 const vuetify = createVuetify({
   components,
   directives,
+  theme: {
+    defaultTheme: 'dark'
+  },
   icons: {
     defaultSet: 'mdi',
     aliases: {
@@ -34,6 +37,8 @@ const vuetify = createVuetify({
       ai: mdiBrain,
       information: mdiInformationOutline,
       logout: mdiLogout,
+      gear: mdiCog,
+      briefcase: mdiBriefcase,
     },
     sets: {
       mdi,
