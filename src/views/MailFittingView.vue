@@ -28,9 +28,9 @@ async function invoke_ai(thread_id: string) {
 
 <template>
   <div>
-    <label>Thread</label> {{ props.thread_id }}<br>
-    <input v-model="restriction" placeholder="Restriction"/><br>
-    <v-textarea v-model="resume" placeholder="Resume" style="width: 100%; height: 20vh;"></v-textarea><br>
+    <label>Thread</label> <v-chip size="small">{{ props.thread_id }}</v-chip>
+    <v-textarea v-model="restriction" label="Restriction" rows="5" />
+    <v-textarea v-model="resume" label="Resume" rows="15" />
     <v-btn
       @click="invoke_ai(props.thread_id)"
       prepend-icon="$ai"
