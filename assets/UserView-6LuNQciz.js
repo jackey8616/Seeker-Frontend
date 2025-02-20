@@ -1,1 +1,0 @@
-import{d as n,a as o,r,o as l,c as u,b as c,h as i,k as p,t as d}from"./index-B2uvkbkY.js";const _=n({__name:"UserView",setup(m){const{axios:t}=o(),e=r("");return l(async()=>{const a=await t.value.get("/users/info");e.value=a.data.name}),(a,s)=>(c(),u("div",null,[s[0]||(s[0]=i("Hello ")),p("b",null,d(e.value),1)]))}});export{_ as default};
