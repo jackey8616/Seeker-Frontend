@@ -32,7 +32,7 @@ function systemInstruction(log: { system_instruction: string[]; }) {
   <div v-if="log">
     <v-card>
       <v-toolbar title="ConversationLog" />
-      <div class="d-flex flex-row" style="height: 100vh;">
+      <div class="d-flex flex-row">
         <v-tabs v-model="tabId" direction="vertical">
           <v-tab value="-1" prepend-icon="$gear">Setup</v-tab>
           <v-tab
@@ -43,34 +43,90 @@ function systemInstruction(log: { system_instruction: string[]; }) {
         </v-tabs>
         <v-tabs-window v-model="tabId" class="flex-grow-1">
           <v-tabs-window-item value="-1">
-            <h3>System Instruction</h3>
-            <v-textarea :value="systemInstruction(log)" style="width: 100%; height: 80vh;"></v-textarea>
+            <v-textarea
+              readonly
+              label="System Instruction"
+              :model-value="systemInstruction(log)"
+              rows="40"
+            />
           </v-tabs-window-item>
           <v-tabs-window-item v-for="(chat, idx) in log.chats" :value="idx">
-            <v-text-field readonly :model-value="chat.json_input.title" label="Title" variant="underlined">
-                <template v-slot:append>
-                <v-btn >
-                  <a :href="chat.json_input.link" target="_blank">Link</a>
-                  <v-tooltip activator="parent" location="bottom">Open job in another tab</v-tooltip>
-                </v-btn>
-                </template>
-            </v-text-field>
-            <v-text-field readonly :model-value="chat.json_input.location" label="Location" variant="underlined" />
-            <v-text-field readonly :model-value="chat.json_input.salary" label="Salary" variant="underlined" />
-            <v-text-field readonly :model-value="chat.json_input.work_type" label="WorkType" variant="underlined" />
-            <v-textarea readonly :model-value="chat.json_input.details" label="Details" style="width: 100%; height: 20vh;" />
-            <br>
-            <v-text-field
-              readonly
-              :model-value="`${date.format(chat.start_datetime, 'keyboardDateTime24h')}  ~  ${date.format(chat.end_datetime, 'keyboardDateTime24h')}`"
-              label="AI runs / ends @"
-              variant="underlined" />
-            <v-text-field
-              readonly
-              :model-value="`${chat.input_token}  /  ${chat.output_token}`"
-              label="Input / Output tokens"
-              variant="underlined" />
-            <v-textarea readonly :model-value="chat.output" label="AI Output" style="width: 100%; height: 40vh;"></v-textarea>
+            <div style="overflow-y: auto; height: 100%;">
+              <v-text-field
+                readonly
+                label="Title"
+                :model-value="chat.json_input.title"
+                variant="underlined"
+              >
+                  <template v-slot:append>
+                  <v-btn >
+                    <a :href="chat.json_input.link" target="_blank">Link</a>
+                    <v-tooltip activator="parent" location="bottom">Open job in another tab</v-tooltip>
+                  </v-btn>
+                  </template>
+              </v-text-field>
+              <v-text-field
+                readonly
+                label="Location"
+                :model-value="chat.json_input.location"
+                variant="underlined"
+              />
+              <v-text-field
+                readonly
+                label="Salary"
+                :model-value="chat.json_input.salary"
+                variant="underlined"
+              />
+              <v-text-field
+                readonly
+                label="WorkType"
+                :model-value="chat.json_input.work_type"
+                variant="underlined"
+              />
+              <v-textarea
+                readonly
+                label="Details"
+                :model-value="chat.json_input.details"
+                rows="10"
+              />
+              <v-divider />
+              <v-text-field
+                readonly
+                label="AI runs / ends @"
+                :model-value="`${date.format(chat.start_datetime, 'keyboardDateTime24h')}  ~  ${date.format(chat.end_datetime, 'keyboardDateTime24h')}`"
+                variant="underlined"
+              />
+              <v-text-field
+                readonly
+                label="Input / Output tokens"
+                :model-value="`${chat.input_token}  /  ${chat.output_token}`"
+                variant="underlined"
+              />
+              <v-textarea
+                readonly
+                label="AI Output"
+                :model-value="chat.output"
+                rows="30"
+              />
+              <v-table v-if="chat.metrics" density="compact">
+                <thead>
+                  <tr>
+                    <td>Metric Name</td>
+                    <td>F1 Score</td>
+                    <td>Precision</td>
+                    <td>Recall</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(metric, key) in chat.metrics.rouge">
+                    <td>{{ key }}</td>
+                    <td>{{ Number(metric.f).toFixed(4) }}</td>
+                    <td>{{ Number(metric.p).toFixed(4) }}</td>
+                    <td>{{ Number(metric.r).toFixed(4) }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
           </v-tabs-window-item>
         </v-tabs-window>
       </div>
