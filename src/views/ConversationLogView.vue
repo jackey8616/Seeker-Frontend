@@ -39,7 +39,7 @@ function systemInstruction(log: { system_instruction: string[]; }) {
             prepend-icon="$briefcase"
             v-for="(_, idx) in log.chats"
             :value="idx"
-          >Job {{ idx + 1}}</v-tab>
+          >Job {{ idx + 1 }}</v-tab>
         </v-tabs>
         <v-tabs-window v-model="tabId" class="flex-grow-1">
           <v-tabs-window-item value="-1">

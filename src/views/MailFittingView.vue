@@ -5,6 +5,7 @@ import { useApi } from '@/composables/useApi';
 
 const props = defineProps<{ thread_id: string }>()
 const { axios } = useApi()
+const tabId = ref(0)
 const invoke_debounce = ref(false)
 const restriction = ref('')
 const resume = ref('')
@@ -39,10 +40,28 @@ async function invoke_ai(thread_id: string) {
     <br>
     <br>
     <hr>
-    <div v-for="result in invoke_results" v-bind:key="result.link">
-      <label>Link</label><a :href="result.link">{{ result.link }}</a><br>
-      <label>Fitting</label>
-      <v-textarea :value="result.response" style="width: 100%; height: 15vh;"></v-textarea>
-    </div>
+    <v-card>
+      <v-tooltip title="Jobs" />
+      <div class="d-flex flex-row">
+        <v-tabs v-model="tabId" direction="vertical">
+          <v-tab
+            prepend-icon="$briefcase"
+            v-for="(_, idx) in invoke_results"
+            :value="idx"
+          >Job {{ idx + 1 }}</v-tab>
+        </v-tabs>
+        <v-tabs-window v-model="tabId" class="flex-grow-1">
+          <v-tabs-window-item v-for="(result, idx) in invoke_results" :value="idx">
+            <div style="overflow-y: auto; height: 100%;">
+              <v-btn >
+                <a :href="result.link" target="_blank">Link</a>
+                <v-tooltip activator="parent" location="bottom">Open job in another tab</v-tooltip>
+              </v-btn>
+              <v-textarea :value="result.response" rows="15"></v-textarea>
+            </div>
+          </v-tabs-window-item>
+        </v-tabs-window>
+      </div>
+    </v-card>
   </div>
 </template>
