@@ -40,6 +40,11 @@ const router = createRouter({
       component: () => import("../views/ConversationLogView.vue"),
       props: true,
     },
+    {
+      path: "/jobs",
+      name: "jobs",
+      component: () => import("../views/JobListView.vue"),
+    },
   ],
 });
 

@@ -19,6 +19,7 @@ import HelloWorld from "@/components/HelloWorld.vue";
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/mails">Mail</RouterLink>
         <RouterLink to="/user">User</RouterLink>
+        <RouterLink to="/jobs">Job</RouterLink>
         <RouterLink to="/conversation-logs">ConversationLogs</RouterLink>
       </nav>
     </div>
