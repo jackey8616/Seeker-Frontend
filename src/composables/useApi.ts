@@ -15,13 +15,21 @@ export function useApi(isOAuthRequest?: boolean) {
       async (err) => {
         const originalRequest = err.config
         if (
-          err.response.status == 401
-          && err.response.data.detail == "Expired token."
+          err.response?.status === 401
+          && err.response?.data?.detail === "Expired token."
           && !originalRequest._retry
         ) {
-          authStore.refresh()
           originalRequest._retry = true
-          return axiosInstance.request(originalRequest)
+          try {
+            await authStore.refresh()
+            // Update the authorization header with the new token
+            originalRequest.headers['Authorization'] = `Bearer ${authStore.token}`
+            return axiosInstance.request(originalRequest)
+          } catch (refreshError) {
+            // If refresh fails, logout the user
+            authStore.logout()
+            return Promise.reject(refreshError)
+          }
         }
         return Promise.reject(err)
       },
