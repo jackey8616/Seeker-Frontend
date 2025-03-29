@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import type { Header, Item } from 'vue3-easy-data-table';
+import type { Header, Item, ServerOptions } from 'vue3-easy-data-table';
 import { useDate } from 'vuetify'
 import { useApi } from '@/composables/useApi'
 
@@ -14,6 +14,9 @@ const headers = ref<Header[]>([
 ])
 const mails = ref<Item[]>([])
 const nextPageToken = ref<string | null>(null)
+const totalCount = ref(0)
+const currentPage = ref(1)
+const isLoading = ref(false)
 const abortController = ref<AbortController | null>(null)
 
 async function downloadMail(id: string): Promise<any> {
@@ -36,45 +39,60 @@ function embedHtml(rawHtml: string) {
   return URL.createObjectURL(blob)
 }
 
-onMounted(async () => {
-  abortController.value = new AbortController()
+async function fetchMails(page = 1) {
+  isLoading.value = true
   
   try {
-    const response = await axios.value.get("/mails/list", {
-      signal: abortController.value.signal
+    const payload = page === 1 ? {} : { next_page_token: nextPageToken.value }
+    const response = await axios.value.post("/mails/list", payload, {
+      signal: abortController.value?.signal
     })
     const { data } = response.data
     mails.value = data.mail_infos
     nextPageToken.value = data.next_page_token
+    totalCount.value = data.total_count
+    currentPage.value = page
 
-    const downloadPromises = mails.value.map((mail) => {
-      return downloadMail(mail.id)
-        .then((mail_data) => {
-          if (mail_data) {
-            mail.sender = mail_data.sender;
-            mail.title = mail_data.title;
-            mail.date = mail_data.date;
-            mail.detailMail = mail_data;
-          }
-        })
-        .catch((err) => {
-          console.error(`Download mail id ${mail.id} cause error`, err)
-        })
-    })
+    if (!abortController.value?.signal.aborted) {
+      const downloadPromises = mails.value.map((mail) => {
+        return downloadMail(mail.id)
+          .then((mail_data) => {
+            if (mail_data && !abortController.value?.signal.aborted) {
+              mail.sender = mail_data.sender;
+              mail.title = mail_data.title;
+              mail.date = mail_data.date;
+              mail.detailMail = mail_data;
+            }
+          })
+          .catch((err) => {
+            if (err.name !== 'AbortError') {
+              console.error(`Download mail id ${mail.id} cause error`, err)
+            }
+          })
+      })
 
-    await Promise.all(downloadPromises)
+      await Promise.all(downloadPromises)
+    }
   } catch (error: any) {
     if (error.name === 'AbortError') {
       console.log('List request was aborted')
       return
     }
     console.error('Error fetching mail list:', error)
+  } finally {
+    isLoading.value = false
   }
+}
+
+onMounted(() => {
+  abortController.value = new AbortController()
+  fetchMails()
 })
 
 onUnmounted(() => {
   if (abortController.value) {
     abortController.value.abort()
+    abortController.value = null
   }
 })
 </script>
@@ -85,6 +103,10 @@ onUnmounted(() => {
       style="width: 100%;"
       :headers="headers"
       :items="mails"
+      :loading="isLoading"
+      :server-items-length="totalCount"
+      :server-options="{ page: currentPage, rowsPerPage: 10 }"
+      @update:server-options="(options: ServerOptions) => fetchMails(options.page)"
     >
       <template #item-action="{ detailMail }">
         <router-link
