@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import WelcomeItem from "./WelcomeItem.vue";
-import DocumentationIcon from "./icons/IconDocumentation.vue";
-import ToolingIcon from "./icons/IconTooling.vue";
-import EcosystemIcon from "./icons/IconEcosystem.vue";
-import CommunityIcon from "./icons/IconCommunity.vue";
-import SupportIcon from "./icons/IconSupport.vue";
 
 const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 </script>
@@ -12,11 +7,11 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 <template>
   <WelcomeItem>
     <template #icon>
-      <DocumentationIcon />
+      <v-icon icon="$documentation" />
     </template>
     <template #heading>Documentation</template>
 
-    Vue’s
+    Vue's
     <a href="https://vuejs.org/" target="_blank" rel="noopener"
       >official documentation</a
     >
@@ -25,7 +20,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <ToolingIcon />
+      <v-icon icon="$gear" />
     </template>
     <template #heading>Tooling</template>
 
@@ -64,7 +59,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <EcosystemIcon />
+      <v-icon icon="$briefcase" />
     </template>
     <template #heading>Ecosystem</template>
 
@@ -90,7 +85,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <CommunityIcon />
+      <v-icon icon="$information" />
     </template>
     <template #heading>Community</template>
 
@@ -113,7 +108,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <SupportIcon />
+      <v-icon icon="$ai" />
     </template>
     <template #heading>Support Vue</template>
 
