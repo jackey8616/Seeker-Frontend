@@ -13,9 +13,6 @@ dependencies:
   vue-router:
     specifier: ^4.5.0
     version: 4.5.0(vue@3.5.13)
-  vue3-easy-data-table:
-    specifier: ^1.5.47
-    version: 1.5.47(typescript@5.7.3)
   vue3-google-login:
     specifier: ^2.0.33
     version: 2.0.33(vue@3.5.13)
@@ -3966,14 +3963,6 @@ packages:
       '@vue/language-core': 2.2.0(typescript@5.7.3)
       typescript: 5.7.3
     dev: true
-
-  /vue3-easy-data-table@1.5.47(typescript@5.7.3):
-    resolution: {integrity: sha512-q0bZBlWIwQ3FIhB+F98ylFPfBJWiS3Xv7QqBe3xS5MbRNZP96RFjaQn7C0Pi0J/aaucNW8gFWxPyh9NESS1ehw==}
-    dependencies:
-      vue: 3.5.13(typescript@5.7.3)
-    transitivePeerDependencies:
-      - typescript
-    dev: false
 
   /vue3-google-login@2.0.33(vue@3.5.13):
     resolution: {integrity: sha512-Hx3JJUREXWCFOOB4AzZKy/x7C+X18kxmT0AquBekm0TRubp11nrWijOLEgmhuij48dQPNumyaAi5IQAeDKk7yw==}

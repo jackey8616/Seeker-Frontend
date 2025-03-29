@@ -3,7 +3,6 @@ import "./assets/main.css";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
-
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -11,9 +10,6 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css'
-
-import Vue3EasyDataTable from 'vue3-easy-data-table';
-import 'vue3-easy-data-table/dist/style.css';
 
 import App from "./App.vue";
 import router from "./router";
@@ -37,7 +33,6 @@ const vuetify = createVuetify({
 })
 const app = createApp(App);
 app.provide('endpoint', endpoint)
-app.component('EasyDataTable', Vue3EasyDataTable)
 
 app.use(vuetify)
 app.use(createPinia());
