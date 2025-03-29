@@ -1,23 +1,38 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import type { Header, Item, ServerOptions } from 'vue3-easy-data-table';
 import { useDate } from 'vuetify'
 import { useApi } from '@/composables/useApi'
 
 const date = useDate()
 const { axios } = useApi()
-const headers = ref<Header[]>([
-  { text: 'Action', value: 'action' },
-  { text: 'Sender', value: 'sender' },
-  { text: 'Title', value: 'title' },
-  { text: 'Date', value: 'date' },
-])
-const mails = ref<Item[]>([])
+
+interface Mail {
+  id: string;
+  sender: string;
+  title: string;
+  date: string;
+  detailMail?: any;
+  extracted_data?: string;
+}
+
+interface TableSlotProps {
+  item: Mail;
+}
+
+const headers = [
+  { title: 'Action', key: 'action', sortable: false },
+  { title: 'Sender', key: 'sender', sortable: false },
+  { title: 'Title', key: 'title', sortable: false },
+  { title: 'Date', key: 'date', sortable: false },
+]
+
+const mails = ref<Mail[]>([])
 const nextPageToken = ref<string | null>(null)
 const totalCount = ref(0)
 const currentPage = ref(1)
 const isLoading = ref(false)
 const abortController = ref<AbortController | null>(null)
+const itemsPerPage = ref(10)
 
 async function downloadMail(id: string): Promise<any> {
   try {
@@ -84,6 +99,10 @@ async function fetchMails(page = 1) {
   }
 }
 
+function handlePageChange(page: number) {
+  fetchMails(page)
+}
+
 onMounted(() => {
   abortController.value = new AbortController()
   fetchMails()
@@ -99,19 +118,21 @@ onUnmounted(() => {
 
 <template>
   <div class="mail">
-    <EasyDataTable
-      style="width: 100%;"
+    <v-data-table-server
       :headers="headers"
       :items="mails"
       :loading="isLoading"
-      :server-items-length="totalCount"
-      :server-options="{ page: currentPage, rowsPerPage: 10 }"
-      @update:server-options="(options: ServerOptions) => fetchMails(options.page)"
+      :items-length="totalCount"
+      :page="currentPage"
+      :items-per-page="itemsPerPage"
+      @update:page="handlePageChange"
+      hide-default-footer
+      hover
     >
-      <template #item-action="{ detailMail }">
+      <template #item.action="{ item }: TableSlotProps">
         <router-link
-          v-if="detailMail !== undefined"
-          :to="{ name: 'mail-fitting', params: { thread_id: detailMail.id } }"
+          v-if="item.detailMail !== undefined"
+          :to="{ name: 'mail-fitting', params: { thread_id: item.detailMail.id } }"
           v-slot="{ navigate }"
           custom
         >
@@ -121,20 +142,53 @@ onUnmounted(() => {
           </v-btn>
         </router-link>
       </template>
-      <template #item-date="{ date: created_at }">
+      <template #item.date="{ item }: TableSlotProps">
         <v-chip size="x-small">
-          {{  date.format(created_at, 'keyboardDateTime24h') }}
-          <v-tooltip activator="parent" location="bottom">{{  created_at  }}</v-tooltip>
+          {{ date.format(item.date, 'keyboardDateTime24h') }}
+          <v-tooltip activator="parent" location="bottom">{{ item.date }}</v-tooltip>
         </v-chip>
       </template>
-      <template #expand="{ detailMail }">
+      <template #expanded-row="{ item }: TableSlotProps">
         <iframe
-          v-if="detailMail.extracted_data"
-          :src="embedHtml(detailMail.extracted_data)"
+          v-if="item.detailMail?.extracted_data"
+          :src="embedHtml(item.detailMail.extracted_data)"
           width="100%"
         ></iframe>
       </template>
-    </EasyDataTable>
+      <template #bottom>
+        <div class="d-flex align-center justify-space-between pa-4">
+          <div class="d-flex align-center gap-2">
+            <div class="text-caption">
+              {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, totalCount) }} of {{ totalCount }}
+            </div>
+            <v-divider vertical class="mx-2"></v-divider>
+            <div class="text-caption">
+              Page {{ currentPage }}
+            </div>
+          </div>
+          <div class="d-flex align-center gap-1">
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              :disabled="currentPage === 1"
+              @click="handlePageChange(currentPage - 1)"
+            >
+              <v-icon>mdi-chevron-double-left</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              :disabled="!nextPageToken"
+              @click="handlePageChange(currentPage + 1)"
+            >
+              <v-icon>mdi-chevron-double-right</v-icon>
+            </v-btn>
+          </div>
+        </div>
+      </template>
+    </v-data-table-server>
   </div>
 </template>
 
