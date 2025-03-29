@@ -33,6 +33,8 @@ const currentPage = ref(1)
 const isLoading = ref(false)
 const abortController = ref<AbortController | null>(null)
 const itemsPerPage = ref(10)
+const showDialog = ref(false)
+const selectedMail = ref<Mail | null>(null)
 
 async function downloadMail(id: string): Promise<any> {
   try {
@@ -103,6 +105,16 @@ function handlePageChange(page: number) {
   fetchMails(page)
 }
 
+function openMailDialog(mail: Mail) {
+  selectedMail.value = mail
+  showDialog.value = true
+}
+
+function closeMailDialog() {
+  showDialog.value = false
+  selectedMail.value = null
+}
+
 onMounted(() => {
   abortController.value = new AbortController()
   fetchMails()
@@ -130,17 +142,23 @@ onUnmounted(() => {
       hover
     >
       <template #item.action="{ item }: TableSlotProps">
-        <router-link
-          v-if="item.detailMail !== undefined"
-          :to="{ name: 'mail-fitting', params: { thread_id: item.detailMail.id } }"
-          v-slot="{ navigate }"
-          custom
-        >
-          <v-btn icon size="x-small" @click="navigate">
-            <v-icon icon="mdi-brain" />
-            <v-tooltip activator="parent" location="bottom">Fitting By AI</v-tooltip>
+        <div class="d-flex gap-2">
+          <v-btn icon size="x-small" @click="openMailDialog(item)">
+            <v-icon icon="mdi-email-open" />
+            <v-tooltip activator="parent" location="bottom">View Mail</v-tooltip>
           </v-btn>
-        </router-link>
+          <router-link
+            v-if="item.detailMail !== undefined"
+            :to="{ name: 'mail-fitting', params: { thread_id: item.detailMail.id } }"
+            v-slot="{ navigate }"
+            custom
+          >
+            <v-btn icon size="x-small" @click="navigate">
+              <v-icon icon="mdi-brain" />
+              <v-tooltip activator="parent" location="bottom">Fitting By AI</v-tooltip>
+            </v-btn>
+          </router-link>
+        </div>
       </template>
       <template #item.date="{ item }: TableSlotProps">
         <v-chip size="x-small">
@@ -174,7 +192,7 @@ onUnmounted(() => {
               :disabled="currentPage === 1"
               @click="handlePageChange(currentPage - 1)"
             >
-              <v-icon>mdi-chevron-double-left</v-icon>
+              <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
             <v-btn
               icon
@@ -183,12 +201,43 @@ onUnmounted(() => {
               :disabled="!nextPageToken"
               @click="handlePageChange(currentPage + 1)"
             >
-              <v-icon>mdi-chevron-double-right</v-icon>
+              <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </div>
         </div>
       </template>
     </v-data-table-server>
+
+    <v-dialog
+      v-model="showDialog"
+      max-width="800px"
+      persistent
+    >
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span>{{ selectedMail?.title }}</span>
+          <v-btn icon @click="closeMailDialog">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <div class="mb-4">
+            <strong>From:</strong> {{ selectedMail?.sender }}
+          </div>
+          <div class="mb-4">
+            <strong>Date:</strong> {{ date.format(selectedMail?.date, 'keyboardDateTime24h') }}
+          </div>
+          <div v-if="selectedMail?.detailMail?.extracted_data" class="mail-content">
+            <iframe
+              :src="embedHtml(selectedMail.detailMail.extracted_data)"
+              width="100%"
+              height="500px"
+              frameborder="0"
+            ></iframe>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -199,5 +248,11 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
   }
+}
+
+.mail-content {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
 }
 </style>
