@@ -137,7 +137,7 @@ onUnmounted(() => {
           custom
         >
           <v-btn icon size="x-small" @click="navigate">
-            <v-icon icon="$ai" />
+            <v-icon icon="mdi-brain" />
             <v-tooltip activator="parent" location="bottom">Fitting By AI</v-tooltip>
           </v-btn>
         </router-link>

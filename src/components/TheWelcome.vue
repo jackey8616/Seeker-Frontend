@@ -7,7 +7,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 <template>
   <WelcomeItem>
     <template #icon>
-      <v-icon icon="$documentation" />
+      <v-icon icon="mdi-book-open-variant" />
     </template>
     <template #heading>Documentation</template>
 
@@ -20,7 +20,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <v-icon icon="$gear" />
+      <v-icon icon="mdi-cog" />
     </template>
     <template #heading>Tooling</template>
 
@@ -59,7 +59,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <v-icon icon="$briefcase" />
+      <v-icon icon="mdi-briefcase" />
     </template>
     <template #heading>Ecosystem</template>
 
@@ -85,7 +85,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <v-icon icon="$information" />
+      <v-icon icon="mdi-information-outline" />
     </template>
     <template #heading>Community</template>
 
@@ -108,7 +108,7 @@ const openReadmeInEditor = () => fetch("/__open-in-editor?file=README.md");
 
   <WelcomeItem>
     <template #icon>
-      <v-icon icon="$ai" />
+      <v-icon icon="mdi-brain" />
     </template>
     <template #heading>Support Vue</template>
 

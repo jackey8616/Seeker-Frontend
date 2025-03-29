@@ -9,29 +9,7 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import { 
-  mdiBrain, 
-  mdiBriefcase, 
-  mdiCog, 
-  mdiGoogle, 
-  mdiInformationOutline, 
-  mdiLogout,
-  mdiEye,
-  mdiAlertCircleOutline,
-  mdiRefresh,
-  mdiChevronLeft,
-  mdiChevronRight,
-  mdiMagnify,
-  mdiFilter,
-  mdiSort,
-  mdiPencil,
-  mdiDelete,
-  mdiPlus,
-  mdiCheck,
-  mdiClose,
-  mdiBookOpenVariant
-} from '@mdi/js'
+import { mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css'
 
 import Vue3EasyDataTable from 'vue3-easy-data-table';
@@ -52,38 +30,6 @@ const vuetify = createVuetify({
   },
   icons: {
     defaultSet: 'mdi',
-    aliases: {
-      ...aliases,
-      // Auth icons
-      google: mdiGoogle,
-      logout: mdiLogout,
-      
-      // Feature icons
-      ai: mdiBrain,
-      information: mdiInformationOutline,
-      gear: mdiCog,
-      briefcase: mdiBriefcase,
-      documentation: mdiBookOpenVariant,
-      
-      // Action icons
-      view: mdiEye,
-      edit: mdiPencil,
-      delete: mdiDelete,
-      add: mdiPlus,
-      refresh: mdiRefresh,
-      search: mdiMagnify,
-      filter: mdiFilter,
-      sort: mdiSort,
-      
-      // Navigation icons
-      prev: mdiChevronLeft,
-      next: mdiChevronRight,
-      
-      // Status icons
-      success: mdiCheck,
-      error: mdiClose,
-      warning: mdiAlertCircleOutline,
-    },
     sets: {
       mdi,
     },

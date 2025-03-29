@@ -37,7 +37,7 @@ onMounted(async () => {
           custom
         >
           <v-btn icon size="x-small" @click="navigate">
-            <v-icon icon="$information" />
+            <v-icon icon="mdi-information-outline" />
             <v-tooltip activator="parent" location="bottom">Detail</v-tooltip>
           </v-btn>
         </router-link>

@@ -34,9 +34,9 @@ function systemInstruction(log: { system_instruction: string[]; }) {
       <v-toolbar title="ConversationLog" />
       <div class="d-flex flex-row">
         <v-tabs v-model="tabId" direction="vertical">
-          <v-tab value="-1" prepend-icon="$gear">Setup</v-tab>
+          <v-tab value="-1" prepend-icon="mdi-cog">Setup</v-tab>
           <v-tab
-            prepend-icon="$briefcase"
+            prepend-icon="mdi-briefcase"
             v-for="(_, idx) in log.chats"
             :value="idx"
           >Job {{ idx + 1 }}</v-tab>

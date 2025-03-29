@@ -34,7 +34,7 @@ async function invoke_ai(thread_id: string) {
     <v-textarea v-model="resume" label="Resume" rows="15" />
     <v-btn
       @click="invoke_ai(props.thread_id)"
-      prepend-icon="$ai"
+      prepend-icon="mdi-brain"
       :disabled="invoke_debounce"
     >AI Invoke</v-btn>
     <br>
@@ -45,7 +45,7 @@ async function invoke_ai(thread_id: string) {
       <div class="d-flex flex-row">
         <v-tabs v-model="tabId" direction="vertical">
           <v-tab
-            prepend-icon="$briefcase"
+            prepend-icon="mdi-briefcase"
             v-for="(_, idx) in invoke_results"
             :value="idx"
           >Job {{ idx + 1 }}</v-tab>
