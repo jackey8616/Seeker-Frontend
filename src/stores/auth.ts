@@ -1,5 +1,6 @@
 import { inject } from "vue"
 import { defineStore } from "pinia"
+import { useRouter } from "vue-router"
 
 import { useApi } from "@/composables/useApi"
 
@@ -8,6 +9,7 @@ export const useAuthStore = defineStore("auth", {
         access_token: localStorage.getItem('access_token'),
         endpoint: inject('endpoint'),
         axios: useApi(true),
+        router: useRouter(),
     }),
     getters: {
         token: (state) => state.access_token,
@@ -36,6 +38,7 @@ export const useAuthStore = defineStore("auth", {
         logout() {
             this.access_token = null;
             localStorage.removeItem('access_token')
+            this.router.push({ name: 'home' })
         }
     },
 })

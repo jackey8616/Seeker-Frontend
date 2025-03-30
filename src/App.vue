@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import HelloWorld from "@/components/HelloWorld.vue";
+import { useAuthStore } from "@/stores/auth";
+
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -17,10 +20,12 @@ import HelloWorld from "@/components/HelloWorld.vue";
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/mails">Mail</RouterLink>
-        <RouterLink to="/user">User</RouterLink>
-        <RouterLink to="/jobs">Job</RouterLink>
-        <RouterLink to="/conversation-logs">ConversationLogs</RouterLink>
+        <template v-if="authStore.isLogin()">
+          <RouterLink to="/mails">Mail</RouterLink>
+          <RouterLink to="/user">User</RouterLink>
+          <RouterLink to="/jobs">Job</RouterLink>
+          <RouterLink to="/conversation-logs">ConversationLogs</RouterLink>
+        </template>
       </nav>
     </div>
   </header>
