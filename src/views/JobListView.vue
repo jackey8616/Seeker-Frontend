@@ -7,11 +7,11 @@ import { useRouter } from 'vue-router'
 interface Job {
   _id: string;
   title: string;
+  url: string;
   domain: string;
   description?: string;
   created_at: string;
   updated_at: string | null;
-  metadata?: Record<string, any>;
 }
 
 // Additional interface for Vuetify data table items
@@ -44,6 +44,8 @@ const previousToken = ref<string | null>()
 const nextToken = ref<string | null>()
 const isLoading = ref(true)
 const totalItems = ref(100)
+const showDialog = ref(false)
+const selectedJob = ref<Job | null>(null)
 
 async function fetchJobs(page = 1) {
   isLoading.value = true
@@ -65,9 +67,18 @@ async function fetchJobs(page = 1) {
 }
 
 async function tableUpdate(options: any) {
-  console.log("Options updated:", options)
   const page = options.page || 1
   await fetchJobs(page)
+}
+
+function openJobDialog(job: Job) {
+  selectedJob.value = job
+  showDialog.value = true
+}
+
+function closeJobDialog() {
+  showDialog.value = false
+  selectedJob.value = null
 }
 
 onMounted(async () => {
@@ -86,18 +97,12 @@ onMounted(async () => {
       @update:options="tableUpdate"
       class="elevation-1"
     >
-      <!-- <template #item.action="{ item }">
-        <router-link
-          :to="{ name: 'job', params: { job_id: item._id } }"
-          v-slot="{ navigate }"
-          custom
-        >
-          <v-btn icon size="small" @click="navigate">
-            <v-icon>mdi-eye</v-icon>
-            <v-tooltip activator="parent" location="bottom">View Details</v-tooltip>
-          </v-btn>
-        </router-link>
-      </template> -->
+      <template #item.action="{ item }">
+        <v-btn icon size="small" @click="openJobDialog(item)">
+          <v-icon>mdi-eye</v-icon>
+          <v-tooltip activator="parent" location="bottom">View Details</v-tooltip>
+        </v-btn>
+      </template>
       <template #item.domain="{ item }">
         <v-chip size="small">{{ item.domain }}</v-chip>
       </template>
@@ -132,5 +137,60 @@ onMounted(async () => {
         <v-skeleton-loader type="table-row@6"></v-skeleton-loader>
       </template>
     </v-data-table-server>
+
+    <v-dialog
+      v-if="selectedJob"
+      v-model="showDialog"
+      max-width="800px"
+      persistent
+      transition="dialog-bottom-transition"
+      :retain-focus="false"
+      @click:outside="closeJobDialog"
+    >
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span>{{ selectedJob.title }}</span>
+          <div class="d-flex gap-2">
+            <v-btn
+              icon
+              :href="selectedJob.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <v-icon>mdi-open-in-new</v-icon>
+              <v-tooltip activator="parent" location="bottom">Open in new tab</v-tooltip>
+            </v-btn>
+            <v-btn icon @click="closeJobDialog">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <div class="mb-4">
+            <strong>Domain:</strong> {{ selectedJob.domain }}
+          </div>
+          <div class="mb-4">
+            <strong>Created At:</strong> {{ date.format(selectedJob.created_at, 'keyboardDateTime24h') }}
+          </div>
+          <div class="mb-4">
+            <strong>Updated At:</strong> {{ selectedJob.updated_at ? date.format(selectedJob.updated_at, 'keyboardDateTime24h') : 'N/A' }}
+          </div>
+          <div class="mb-4">
+            <strong>Description:</strong>
+            <div class="mt-2">{{ selectedJob.description || 'No description available' }}</div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
+
+<style>
+pre {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+</style>
