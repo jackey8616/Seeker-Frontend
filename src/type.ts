@@ -13,6 +13,7 @@ interface Metrics {
 }
 
 export interface AiChatLog {
+    executor_id: string
     conversation_id: string
     input: string
     output: string
