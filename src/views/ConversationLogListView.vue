@@ -31,6 +31,7 @@ const totalItems = ref(100)
 const currentPage = ref(1)
 const previousToken = ref<string | null>()
 const nextToken = ref<string | null>()
+const itemsPerPage = ref(20)
 const options = ref({
   page: 1,
   itemsPerPage: 20,
@@ -91,6 +92,7 @@ const openDetailDialog = async (logId: string) => {
       items-per-page="20"
       @update:options="tableUpdate"
       class="elevation-1"
+      hide-default-footer
     >
       <template #item.action="{ item }">
         <v-btn icon size="x-small" @click="openDetailDialog(item._id)">
@@ -131,6 +133,40 @@ const openDetailDialog = async (logId: string) => {
 
       <template #loading>
         <v-skeleton-loader type="table-row@6"></v-skeleton-loader>
+      </template>
+
+      <template #bottom>
+        <div class="d-flex align-center justify-space-between pa-4">
+          <div class="d-flex align-center gap-2">
+            <div class="text-caption">
+              {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, totalItems) }} of {{ totalItems }}
+            </div>
+            <v-divider vertical class="mx-2"></v-divider>
+            <div class="text-caption">
+              Page {{ currentPage }}
+            </div>
+          </div>
+          <div class="d-flex align-center gap-1">
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              :disabled="currentPage === 1"
+              @click="tableUpdate({ page: currentPage - 1 })"
+            >
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              :disabled="!nextToken"
+              @click="tableUpdate({ page: currentPage + 1 })"
+            >
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </div>
+        </div>
       </template>
     </v-data-table-server>
 
