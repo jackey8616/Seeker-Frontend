@@ -3,26 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useDate } from 'vuetify'
 import { useApi } from '@/composables/useApi'
 import { useRouter } from 'vue-router'
+import type { ApiResponseDto, Job, JobResponse } from '@/type';
 
-interface Job {
-  _id: string;
-  title: string;
-  url: string;
-  domain: string;
-  description?: string;
-  created_at: string;
-  updated_at: string | null;
-}
-
-// Additional interface for Vuetify data table items
-interface DataTableItem {
-  columns: Record<string, any>;
-  item: {
-    raw: Job;
-    value: unknown;
-  };
-  internalItem: Job;
-}
 
 const date = useDate()
 const { axios } = useApi()
@@ -52,10 +34,10 @@ async function fetchJobs(page = 1) {
   const payload = page == 1 ? {} : { "page_token": page > currentPage.value ? nextToken.value : previousToken.value }
   
   try {
-    const { data } = await axios.value.post("/jobs", payload)
-    jobs.value = data.data.jobs
-    previousToken.value = data.data.cursor.previous_page_token
-    nextToken.value = data.data.cursor.next_page_token
+    const { data }: ApiResponseDto<JobResponse> = await axios.value.post("/jobs", payload).then(({ data }) => data);
+    jobs.value = data.jobs
+    previousToken.value = data.cursor.previous_page_token
+    nextToken.value = data.cursor.next_page_token
     currentPage.value = page
     
     totalItems.value = Math.max(100, jobs.value.length * 5)
@@ -175,22 +157,52 @@ onMounted(async () => {
           <div class="mb-4">
             <strong>Updated At:</strong> {{ selectedJob.updated_at ? date.format(selectedJob.updated_at, 'keyboardDateTime24h') : 'N/A' }}
           </div>
-          <div class="mb-4">
-            <strong>Description:</strong>
-            <div class="mt-2">{{ selectedJob.description || 'No description available' }}</div>
-          </div>
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-title>
+                <strong>Description</strong>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                {{ selectedJob.description || 'No description available' }}
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-title>
+                <strong>Chat Logs</strong>
+                <template #actions>
+                  <v-chip size="small" class="ml-2">{{ selectedJob.chat_logs?.length || 0 }} conversations</v-chip>
+                </template>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <div v-if="selectedJob.chat_logs && selectedJob.chat_logs.length > 0">
+                  <div v-for="(chat, index) in selectedJob.chat_logs" :key="index" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div class="d-flex align-center mb-2">
+                      <v-chip size="small" color="primary" class="mr-2">
+                        {{ date.format(chat.start_datetime, 'keyboardDateTime24h') }}
+                      </v-chip>
+                      <v-chip size="small" variant="outlined">
+                        {{ chat.input_token + chat.output_token }} tokens
+                      </v-chip>
+                    </div>
+                    <div style="padding: 8px 0;">
+                      <div class="text-subtitle-2 mb-1">Input:</div>
+                      <div style="white-space: pre-wrap; word-break: break-word;">{{ chat.input }}</div>
+                    </div>
+                    <div style="padding: 8px 0;">
+                      <div class="text-subtitle-2 mb-1">Output:</div>
+                      <div style="white-space: pre-wrap; word-break: break-word;">{{ chat.output }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="text-center py-4 text-grey">
+                  <v-icon size="large" class="mb-2">mdi-chat-outline</v-icon>
+                  <div>No chat logs available</div>
+                </div>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </v-card-text>
       </v-card>
     </v-dialog>
   </div>
 </template>
-
-<style>
-pre {
-  background-color: #f5f5f5;
-  padding: 1rem;
-  border-radius: 4px;
-  overflow-x: auto;
-  font-size: 0.875rem;
-}
-</style>
