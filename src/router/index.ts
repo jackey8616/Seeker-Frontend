@@ -37,13 +37,6 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: "/conversation-log/:conversation_log_id",
-      name: 'conversation-log',
-      component: () => import("../views/ConversationLogView.vue"),
-      props: true,
-      meta: { requiresAuth: true }
-    },
-    {
       path: "/jobs",
       name: "jobs",
       component: () => import("../views/JobListView.vue"),

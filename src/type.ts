@@ -1,6 +1,15 @@
-
 export interface ApiResponseDto<T> {
     data: T;
+}
+
+interface RougeMetric {
+    f: number;
+    p: number;
+    r: number;
+}
+
+interface Metrics {
+    rouge: Record<string, RougeMetric>;
 }
 
 export interface AiChatLog {
@@ -11,7 +20,7 @@ export interface AiChatLog {
     output_token: number
     start_datetime: Date
     end_datetime: Date
-    metrics: Object
+    metrics: Metrics
 }
 
 export interface AiConversationLog {
