@@ -59,3 +59,12 @@ export interface JobResponse {
     jobs: Job[];
     cursor: Cursor;
 }
+
+export interface Mail {
+  id: string;
+  sender: string;
+  title: string;
+  date: string;
+  detailMail?: any;
+  extracted_data?: string;
+}

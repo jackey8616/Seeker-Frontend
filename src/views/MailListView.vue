@@ -2,22 +2,11 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useDate } from 'vuetify'
 import { useApi } from '@/composables/useApi'
+import MailDetailDialog from '@/components/MailDetailDialog.vue'
+import type { Mail } from '@/type';
 
 const date = useDate()
 const { axios } = useApi()
-
-interface Mail {
-  id: string;
-  sender: string;
-  title: string;
-  date: string;
-  detailMail?: any;
-  extracted_data?: string;
-}
-
-interface TableSlotProps {
-  item: Mail;
-}
 
 const headers = [
   { title: 'Action', key: 'action', sortable: false },
@@ -110,11 +99,6 @@ function openMailDialog(mail: Mail) {
   showDialog.value = true
 }
 
-function closeMailDialog() {
-  showDialog.value = false
-  selectedMail.value = null
-}
-
 onMounted(() => {
   abortController.value = new AbortController()
   fetchMails()
@@ -141,7 +125,7 @@ onUnmounted(() => {
       hide-default-footer
       hover
     >
-      <template #item.action="{ item }: TableSlotProps">
+      <template #item.action="{ item }">
         <div class="d-flex gap-2">
           <v-btn icon size="x-small" @click="openMailDialog(item)">
             <v-icon icon="mdi-email-open" />
@@ -160,13 +144,13 @@ onUnmounted(() => {
           </router-link>
         </div>
       </template>
-      <template #item.date="{ item }: TableSlotProps">
+      <template #item.date="{ item }">
         <v-chip size="x-small">
           {{ date.format(item.date, 'keyboardDateTime24h') }}
           <v-tooltip activator="parent" location="bottom">{{ item.date }}</v-tooltip>
         </v-chip>
       </template>
-      <template #expanded-row="{ item }: TableSlotProps">
+      <template #expanded-row="{ item }">
         <iframe
           v-if="item.detailMail?.extracted_data"
           :src="embedHtml(item.detailMail.extracted_data)"
@@ -208,36 +192,10 @@ onUnmounted(() => {
       </template>
     </v-data-table-server>
 
-    <v-dialog
+    <MailDetailDialog
       v-model="showDialog"
-      max-width="800px"
-      persistent
-    >
-      <v-card>
-        <v-card-title class="d-flex justify-space-between align-center">
-          <span>{{ selectedMail?.title }}</span>
-          <v-btn icon @click="closeMailDialog">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text>
-          <div class="mb-4">
-            <strong>From:</strong> {{ selectedMail?.sender }}
-          </div>
-          <div class="mb-4">
-            <strong>Date:</strong> {{ date.format(selectedMail?.date, 'keyboardDateTime24h') }}
-          </div>
-          <div v-if="selectedMail?.detailMail?.extracted_data" class="mail-content">
-            <iframe
-              :src="embedHtml(selectedMail.detailMail.extracted_data)"
-              width="100%"
-              height="500px"
-              frameborder="0"
-            ></iframe>
-          </div>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+      :mail="selectedMail"
+    />
   </div>
 </template>
 
