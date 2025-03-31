@@ -35,10 +35,21 @@ export const useAuthStore = defineStore("auth", {
         isLogin() {
             return this.access_token !== undefined && this.access_token !== null
         },
-        logout() {
-            this.access_token = null;
-            localStorage.removeItem('access_token')
-            this.router.push({ name: 'home' })
+        async logout() {
+            const { axios } = this.axios
+            try {
+                await axios.post(`${this.endpoint}/auth/logout`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${this.access_token}`
+                    },
+                })
+            } catch (error) {
+                console.error('Error during logout:', error)
+            } finally {
+                this.access_token = null;
+                localStorage.removeItem('access_token')
+                this.router.push({ name: 'home' })
+            }
         }
     },
 })
