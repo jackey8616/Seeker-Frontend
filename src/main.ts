@@ -11,10 +11,12 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import App from "./App.vue";
 import router from "./router";
+import ApiClient from "./composables/apiClient";
 
-
-const endpoint = "https://seeker-backend.clo5de.info"
-// const endpoint = "https://localhost:8090"
+const endpoint = import.meta.env.VITE_API_ENDPOINT;
+const apiClient = new ApiClient({ baseURL: endpoint })
+  .withCredentials()
+  .withAutoRefresh()
 
 const vuetify = createVuetify({
   components,
@@ -31,6 +33,7 @@ const vuetify = createVuetify({
 })
 const app = createApp(App);
 app.provide('endpoint', endpoint)
+app.provide('apiClient', apiClient)
 
 app.use(vuetify)
 app.use(createPinia());

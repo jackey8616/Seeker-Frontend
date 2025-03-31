@@ -59,7 +59,7 @@ const handleGoogleAuthCodeLogin = async (include_granted_scopes = false) => {
 </script>
 
 <template>
-  <div v-if="authStore.isLogin() === false">
+  <div v-if="authStore.isAuthenticated === false">
     <v-btn prepend-icon="mdi-google" @click="handleGoogleAuthCodeLogin">使用 Google 進行登入</v-btn>
   </div>
 </template>

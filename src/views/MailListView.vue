@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { inject, onMounted, onUnmounted, ref } from 'vue';
 import { useDate } from 'vuetify'
-import { useApi } from '@/composables/useApi'
 import MailDetailDialog from '@/components/MailDetailDialog.vue'
 import type { Mail } from '@/type';
+import type ApiClient from '@/composables/apiClient';
 
+const apiClient = inject('apiClient') as ApiClient;
 const date = useDate()
-const { axios } = useApi()
 
 const headers = [
   { title: 'Action', key: 'action', sortable: false },
@@ -27,7 +27,7 @@ const selectedMail = ref<Mail | null>(null)
 
 async function downloadMail(id: string): Promise<any> {
   try {
-    const response = await axios.value.get(`/mails/${id}`, {
+    const response = await apiClient.client.get(`/mails/${id}`, {
       signal: abortController.value?.signal
     })
     return response.data.data.mail
@@ -50,7 +50,7 @@ async function fetchMails(page = 1) {
   
   try {
     const payload = page === 1 ? {} : { next_page_token: nextPageToken.value }
-    const response = await axios.value.post("/mails/list", payload, {
+    const response = await apiClient.client.post("/mails/list", payload, {
       signal: abortController.value?.signal
     })
     const { data } = response.data

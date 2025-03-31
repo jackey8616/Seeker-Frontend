@@ -27,7 +27,7 @@ const handleLogout = () => {
       Home
     </v-btn>
 
-    <template v-if="authStore.isLogin()">
+    <template v-if="authStore.isAuthenticated">
       <v-btn
         prepend-icon="mdi-email"
         to="/mails"

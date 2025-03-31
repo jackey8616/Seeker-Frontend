@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 
-import { useApi } from '@/composables/useApi';
+import type ApiClient from '@/composables/apiClient';
 
+const apiClient = inject('apiClient') as ApiClient;
 const props = defineProps<{ thread_id: string }>()
-const { axios } = useApi()
+
 const tabId = ref(0)
 const invoke_debounce = ref(false)
 const restriction = ref('')
@@ -13,7 +14,7 @@ const invoke_results = ref()
 
 async function invoke_ai(thread_id: string) {
   invoke_debounce.value = true
-  const response = await axios.value.post(
+  const response = await apiClient.client.post(
     `/mails/fitting_by_ai/${thread_id}`,
     {
       restriction: restriction.value,

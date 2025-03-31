@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useDate } from 'vuetify'
-import { useApi } from '@/composables/useApi'
 import type { ApiResponseDto, ConversationLogResponse, AiConversationLog } from '@/type';
 import ConversationLogDetailDialog from '@/components/ConversationLogDetailDialog.vue'
+import type ApiClient from '@/composables/apiClient';
 
 interface ConversationLog {
   _id: string;
@@ -14,8 +14,8 @@ interface ConversationLog {
   updated_at: string | null;
 }
 
+const apiClient = inject('apiClient') as ApiClient;
 const date = useDate()
-const { axios } = useApi()
 
 const headers = [
   { title: 'Action', key: 'action', sortable: false },
@@ -51,7 +51,7 @@ const loadItems = async (page: number) => {
   const payload = page === 1 ? {} : { "page_token": page > currentPage.value ? nextToken.value : previousToken.value }
   
   try {
-    const response = await axios.value.post("/conversation_logs", payload)
+    const response = await apiClient.client.post("/conversation_logs", payload)
     logs.value = response.data.data.logs
     previousToken.value = response.data.data.cursor.previous_page_token
     nextToken.value = response.data.data.cursor.next_page_token
@@ -72,7 +72,7 @@ const tableUpdate = async (options: any) => {
 
 const openDetailDialog = async (logId: string) => {
   try {
-    const response = await axios.value.get<ApiResponseDto<ConversationLogResponse>>(`/conversation_logs/${logId}`)
+    const response = await apiClient.client.get<ApiResponseDto<ConversationLogResponse>>(`/conversation_logs/${logId}`)
     selectedLog.value = response.data.data.log
     showDialog.value = true
   } catch (error) {

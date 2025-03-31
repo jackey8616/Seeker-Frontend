@@ -28,7 +28,7 @@ const handleLogout = () => {
         active-color="primary"
       ></v-list-item>
 
-      <template v-if="authStore.isLogin()">
+      <template v-if="authStore.isAuthenticated">
         <v-list-item
           prepend-icon="mdi-email"
           title="Mail"

@@ -23,7 +23,7 @@ const authStore = useAuthStore()
 
           <v-divider class="my-6"></v-divider>
 
-          <div v-if="!authStore.isLogin()" class="text-center">
+          <div v-if="!authStore.isAuthenticated" class="text-center">
             <p class="text-body-large mb-4">
               Get started by signing in with your Google account to access all features:
             </p>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import type ApiClient from '@/composables/apiClient';
+import { inject, onMounted, ref } from 'vue';
 
-import { useApi } from '@/composables/useApi';
 
-const { axios } = useApi()
+const apiClient = inject('apiClient') as ApiClient;
 const name = ref<string>('')
 
 onMounted(async () => {
-  const response = await axios.value.get(`/users/info`)
+  const response = await apiClient.client.get(`/users/info`)
   name.value = response.data.name
 });
 </script>

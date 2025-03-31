@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import { useDate } from 'vuetify'
-import { useApi } from '@/composables/useApi'
 import { useRouter } from 'vue-router'
 import type { ApiResponseDto, Job, JobResponse } from '@/type';
 import JobDetailDialog from '@/components/JobDetailDialog.vue';
+import type ApiClient from '@/composables/apiClient';
 
+const apiClient = inject('apiClient') as ApiClient;
 const date = useDate()
-const { axios } = useApi()
 const router = useRouter()
 const headers = ref([
   { title: 'Action', text: 'Action', value: 'action', sortable: false, width: '60px' },
@@ -35,7 +35,7 @@ async function fetchJobs(page = 1) {
   const payload = page == 1 ? {} : { "page_token": page > currentPage.value ? nextToken.value : previousToken.value }
   
   try {
-    const { data }: ApiResponseDto<JobResponse> = await axios.value.post("/jobs", payload).then(({ data }) => data);
+    const { data }: ApiResponseDto<JobResponse> = await apiClient.client.post("/jobs", payload).then(({ data }) => data);
     jobs.value = data.jobs
     previousToken.value = data.cursor.previous_page_token
     nextToken.value = data.cursor.next_page_token
