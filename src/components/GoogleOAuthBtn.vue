@@ -31,7 +31,7 @@ const fetchGoogleConfigurations = async () => {
   }
 }
 
-const handleGoogleAuthCodeLogin = async () => {
+const handleGoogleAuthCodeLogin = async (include_granted_scopes = false) => {
   const state = generateState()
   const {
     clientId: client_id,
@@ -41,6 +41,7 @@ const handleGoogleAuthCodeLogin = async () => {
 
   googleSdkLoaded((google) => {
     google.accounts.oauth2.initCodeClient({
+      include_granted_scopes,
       client_id,
       redirect_uri,
       scope,
