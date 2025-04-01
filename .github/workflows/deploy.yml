@@ -32,7 +32,9 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm build
+        run: |
+          echo "VITE_API_ENDPOINT=${{ secrets.PROD_API_URL }}" >> .env.production
+          pnpm build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

@@ -46,14 +46,14 @@ const handleGoogleAuthCodeLogin = async (include_granted_scopes = false) => {
       redirect_uri,
       scope,
       state,
-      callback: async (response) => {
+      callback: async (response: any) => {
         /* CodePopupResponse missed state, thus cast to any */
         const { state: responseState, code } = response as any
         compareState(responseState)
 
         authStore.oauthLogin(code)
       },
-    }).requestCode()
+    } as any).requestCode()
   })
 }
 </script>
