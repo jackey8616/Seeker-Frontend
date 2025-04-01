@@ -131,17 +131,6 @@ onUnmounted(() => {
             <v-icon icon="mdi-email-open" />
             <v-tooltip activator="parent" location="bottom">View Mail</v-tooltip>
           </v-btn>
-          <router-link
-            v-if="item.detailMail !== undefined"
-            :to="{ name: 'mail-fitting', params: { thread_id: item.detailMail.id } }"
-            v-slot="{ navigate }"
-            custom
-          >
-            <v-btn icon size="x-small" @click="navigate">
-              <v-icon icon="mdi-brain" />
-              <v-tooltip activator="parent" location="bottom">Fitting By AI</v-tooltip>
-            </v-btn>
-          </router-link>
         </div>
       </template>
       <template #item.date="{ item }">
