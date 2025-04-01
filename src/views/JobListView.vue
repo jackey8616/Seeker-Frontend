@@ -8,7 +8,8 @@ import type ApiClient from '@/composables/apiClient';
 
 const apiClient = inject('apiClient') as ApiClient;
 const date = useDate()
-const router = useRouter()
+const urlInput = ref('')
+const isSubmitting = ref(false)
 const headers = ref([
   { title: 'Action', text: 'Action', value: 'action', sortable: false, width: '60px' },
   { title: 'Domain', text: 'Domain', value: 'domain', width: '120px'},
@@ -30,8 +31,8 @@ const showDialog = ref(false)
 const selectedJob = ref<Job | null>(null)
 const itemsPerPage = ref(20)
 
-async function fetchJobs(page = 1) {
-  isLoading.value = true
+async function fetchJobs(page = 1, withLoading = true) {
+  if (withLoading) { isLoading.value = true }
   const payload = page == 1 ? {} : { "page_token": page > currentPage.value ? nextToken.value : previousToken.value }
   
   try {
@@ -45,7 +46,7 @@ async function fetchJobs(page = 1) {
   } catch (error) {
     console.error("Error fetching jobs:", error)
   } finally {
-    isLoading.value = false
+    if (withLoading) { isLoading.value = false }
   }
 }
 
@@ -59,6 +60,21 @@ function openJobDialog(job: Job) {
   showDialog.value = true
 }
 
+async function handleUrlSubmit() {
+  if (!urlInput.value) return;
+  
+  isSubmitting.value = true;
+  try {
+    await apiClient.client.post('/jobs/crawl', { url: urlInput.value });
+    urlInput.value = '';
+    fetchJobs(1, false);
+  } catch (error) {
+    console.error("Error submitting URL:", error);
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
 onMounted(async () => {
   await fetchJobs(1)
 })
@@ -66,6 +82,25 @@ onMounted(async () => {
 
 <template>
   <div>
+    <div class="d-flex align-center gap-2 mb-4">
+      <v-text-field
+        v-model="urlInput"
+        label="Enter URL to add a Job"
+        placeholder="https://example.com"
+        hide-details
+        class="flex-grow-1"
+        :disabled="isSubmitting"
+      ></v-text-field>
+      <v-btn
+        color="primary"
+        :loading="isSubmitting"
+        :disabled="!urlInput || isSubmitting"
+        @click="handleUrlSubmit"
+      >
+        Submit
+      </v-btn>
+    </div>
+
     <v-data-table-server
       :headers="headers"
       :items="jobs"
