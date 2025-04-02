@@ -1,1 +1,0 @@
-import{d as s,k as o,l,j as r,c as i,e as c,b as p,t as u,o as d}from"./index-DszUUmPU.js";const _=s({__name:"UserView",setup(m){const n=r("apiClient"),e=o("");return l(async()=>{const a=await n.client.get("/users/info");e.value=a.data.name}),(a,t)=>(d(),i("div",null,[t[0]||(t[0]=c("Hello ")),p("b",null,u(e.value),1)]))}});export{_ as default};
