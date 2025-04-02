@@ -34,6 +34,16 @@ function closeDialog() {
       <v-card-title class="d-flex justify-space-between align-center">
         <span>{{ job.title }}</span>
         <div class="d-flex gap-2">
+          <router-link
+            :to="{ name: 'job-fitting', params: { job_id: job.id } }"
+            v-slot="{ navigate }"
+            custom
+          >
+            <v-btn icon @click="navigate">
+              <v-icon icon="mdi-brain" />
+              <v-tooltip activator="parent" location="bottom">Fitting By AI</v-tooltip>
+            </v-btn>
+          </router-link>
           <v-btn
             icon
             :href="job.url"

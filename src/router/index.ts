@@ -21,19 +21,19 @@ const router = createRouter({
       name: "terms-and-conditions",
       component: () => import("../views/TermsAndConditionsView.vue"),
     },
-    {
-      path: "/mails",
-      name: "mails",
-      component: () => import("../views/MailListView.vue"),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: "/mail-fitting/:thread_id",
-      name: 'mail-fitting',
-      component: () => import("../views/MailFittingView.vue"),
-      props: true,
-      meta: { requiresAuth: true }
-    },
+    // {
+    //   path: "/mails",
+    //   name: "mails",
+    //   component: () => import("../views/MailListView.vue"),
+    //   meta: { requiresAuth: true }
+    // },
+    // {
+    //   path: "/mail-fitting/:thread_id",
+    //   name: 'mail-fitting',
+    //   component: () => import("../views/MailFittingView.vue"),
+    //   props: true,
+    //   meta: { requiresAuth: true }
+    // },
     {
       path: "/user",
       name: "user",
@@ -50,6 +50,13 @@ const router = createRouter({
       path: "/jobs",
       name: "jobs",
       component: () => import("../views/JobListView.vue"),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: "/job-fitting/:job_id",
+      name: "job-fitting",
+      component: () => import("../views/JobFittingView.vue"),
+      props: true,
       meta: { requiresAuth: true }
     },
   ],

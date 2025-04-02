@@ -28,14 +28,14 @@ const handleLogout = () => {
     </v-btn>
 
     <template v-if="authStore.isAuthenticated">
-      <v-btn
+      <!-- <v-btn
         prepend-icon="mdi-email"
         to="/mails"
         value="mails"
         active-color="primary"
       >
         Mail
-      </v-btn>
+      </v-btn> -->
 
       <v-btn
         prepend-icon="mdi-account"

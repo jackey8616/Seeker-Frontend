@@ -67,6 +67,10 @@ export interface Cursor {
     next_page_token: string | null;
 }
 
+export interface JobResponse {
+    job: Job;
+}
+
 export interface JobsResponse {
     jobs: Job[];
     cursor: Cursor;
