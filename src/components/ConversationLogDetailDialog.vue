@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useDate } from 'vuetify'
 import type { AiConversationLog } from '@/type'
+import ChatLogDetail from './ChatLogDetail.vue';
 
 const props = defineProps<{
   modelValue: boolean
@@ -48,44 +49,7 @@ const showDialog = computed({
             />
           </v-tabs-window-item>
           <v-tabs-window-item v-for="(chat, idx) in log.chats" :value="idx">
-            <div style="overflow-y: auto; height: 100%;">
-              <v-text-field
-                readonly
-                label="AI runs / ends @"
-                :model-value="`${date.format(chat.start_datetime, 'keyboardDateTime24h')}  ~  ${date.format(chat.end_datetime, 'keyboardDateTime24h')}`"
-                variant="underlined"
-              />
-              <v-text-field
-                readonly
-                label="Input / Output tokens"
-                :model-value="`${chat.input_token}  /  ${chat.output_token}`"
-                variant="underlined"
-              />
-              <v-textarea
-                readonly
-                label="AI Output"
-                :model-value="chat.output"
-                rows="30"
-              />
-              <v-table v-if="chat.metrics" density="compact">
-                <thead>
-                  <tr>
-                    <td>Metric Name</td>
-                    <td>F1 Score</td>
-                    <td>Precision</td>
-                    <td>Recall</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(metric, key) in chat.metrics['rouge']">
-                    <td>{{ key }}</td>
-                    <td>{{ Number(metric.f).toFixed(4) }}</td>
-                    <td>{{ Number(metric.p).toFixed(4) }}</td>
-                    <td>{{ Number(metric.r).toFixed(4) }}</td>
-                  </tr>
-                </tbody>
-              </v-table>
-            </div>
+            <ChatLogDetail :chat="chat" />
           </v-tabs-window-item>
         </v-tabs-window>
       </div>

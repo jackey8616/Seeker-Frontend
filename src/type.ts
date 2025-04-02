@@ -40,12 +40,23 @@ export interface ConversationLogResponse {
     log: AiConversationLog;
 }
 
+export interface Company {
+    name: string;
+    link: string;
+}
+
 export interface Job {
-    _id: string;
-    title: string;
-    url: string;
+    id: string;
     domain: string;
-    description?: string;
+    url: string;
+    title: string;
+    location: string;
+    company: Company;
+    salary: string;
+    work_type: string;
+    description: string;
+    raw_description: string;
+    description_hash: string;
     created_at: string;
     updated_at: string | null;
     chat_logs: AiChatLog[];
@@ -56,7 +67,7 @@ export interface Cursor {
     next_page_token: string | null;
 }
 
-export interface JobResponse {
+export interface JobsResponse {
     jobs: Job[];
     cursor: Cursor;
 }

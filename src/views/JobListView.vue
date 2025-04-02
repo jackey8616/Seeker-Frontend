@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, inject } from 'vue';
 import { useDate } from 'vuetify'
-import { useRouter } from 'vue-router'
-import type { ApiResponseDto, Job, JobResponse } from '@/type';
+import type { ApiResponseDto, Job, JobsResponse } from '@/type';
 import JobDetailDialog from '@/components/JobDetailDialog.vue';
 import type ApiClient from '@/composables/apiClient';
 
@@ -36,7 +35,7 @@ async function fetchJobs(page = 1, withLoading = true) {
   const payload = page == 1 ? {} : { "page_token": page > currentPage.value ? nextToken.value : previousToken.value }
   
   try {
-    const { data }: ApiResponseDto<JobResponse> = await apiClient.client.post("/jobs", payload).then(({ data }) => data);
+    const { data }: ApiResponseDto<JobsResponse> = await apiClient.client.post("/jobs", payload).then(({ data }) => data);
     jobs.value = data.jobs
     previousToken.value = data.cursor.previous_page_token
     nextToken.value = data.cursor.next_page_token
@@ -112,10 +111,12 @@ onMounted(async () => {
       hide-default-footer
     >
       <template #item.action="{ item }">
-        <v-btn icon size="small" @click="openJobDialog(item)">
-          <v-icon>mdi-eye</v-icon>
-          <v-tooltip activator="parent" location="bottom">View Details</v-tooltip>
-        </v-btn>
+        <div class="d-flex gap-1">
+          <v-btn icon size="small" @click="openJobDialog(item)">
+            <v-icon>mdi-eye</v-icon>
+            <v-tooltip activator="parent" location="bottom">View Details</v-tooltip>
+          </v-btn>
+        </div>
       </template>
       <template #item.domain="{ item }">
         <v-chip size="small">{{ item.domain }}</v-chip>
