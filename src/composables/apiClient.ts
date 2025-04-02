@@ -48,17 +48,17 @@ export default class ApiClient {
                     error.response?.data?.detail === "Expired token." &&
                     !originalRequest._retry
                 ) {
-                    console.log('ApiClient: Detected expired token, attempting refresh.');
+                    console.debug('ApiClient: Detected expired token, attempting refresh.');
                     originalRequest._retry = true;
         
                     if (authStore.isRefreshing) {
-                        console.log('ApiClient: Refresh already in progress, waiting...');
+                        console.debug('ApiClient: Refresh already in progress, waiting...');
                         try {
                             const newToken = await new Promise<string>(resolve => {
                                 authStore.addRefreshSubscriber(resolve);
                             });
         
-                            console.log('ApiClient: Refresh completed by another request, retrying original.');
+                            console.debug('ApiClient: Refresh completed by another request, retrying original.');
                             originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
 
                             return this.client(originalRequest);
@@ -68,9 +68,9 @@ export default class ApiClient {
                         }
                     } else {
                         try {
-                            console.log('ApiClient: Initiating token refresh...');
+                            console.debug('ApiClient: Initiating token refresh...');
                             const newToken = await authStore.refresh();
-                            console.log('ApiClient: Token refresh successful, retrying original request.');
+                            console.debug('ApiClient: Token refresh successful, retrying original request.');
                             originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
 
                             return this.client(originalRequest);

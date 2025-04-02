@@ -7,19 +7,14 @@ const OAUTH_VERIFY_URL = `${API_BASE_URL}/auth/oauth/google/verify`;
 const REFRESH_URL = `${API_BASE_URL}/auth/refresh`;
 const LOGOUT_URL = `${API_BASE_URL}/auth/logout`;
 
-
-const getTokensFromStorage = () => {
-    return {
-        accessToken: localStorage.getItem('accessToken'),
-        refreshToken: localStorage.getItem('refreshToken'),
-    };
+const getAccessTokenFromStorage = () => {
+    return localStorage.getItem('accessToken');
 };
 
 export const useAuthStore = defineStore('auth', {
     // --- State ---
     state: () => ({
-        accessToken: getTokensFromStorage().accessToken || null,
-        refreshToken: getTokensFromStorage().refreshToken || null,
+        accessToken: getAccessTokenFromStorage() || null,
         user: null,
         isRefreshing: false,
         refreshSubscribers: [] as ((newAccessToken: string) => void)[],
@@ -33,23 +28,17 @@ export const useAuthStore = defineStore('auth', {
 
     // --- Actions ---
     actions: {
-        setTokens({ accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
-            console.log("AuthStore: Setting tokens");
+        setAccessToken(accessToken: string) {
+            console.debug("AuthStore: Setting access token");
             this.accessToken = accessToken;
             localStorage.setItem('accessToken', accessToken);
-            if (refreshToken) {
-                this.refreshToken = refreshToken;
-                localStorage.setItem('refreshToken', refreshToken);
-            }
         },
 
         clearTokens() {
-            console.log("AuthStore: Clearing tokens");
+            console.debug("AuthStore: Clearing tokens");
             this.accessToken = null;
-            this.refreshToken = null;
             this.user = null;
             localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
             this.isRefreshing = false;
             this.refreshSubscribers = [];
         },
@@ -57,17 +46,16 @@ export const useAuthStore = defineStore('auth', {
         async oauthLogin(code: string) {
             this.clearTokens();
             try {
-                console.log("AuthStore: Performing OAuth login via plain axios");
-                const response = await axios.post(OAUTH_VERIFY_URL, { code });
+                console.debug("AuthStore: Performing OAuth login via plain axios");
+                const response = await axios.post(OAUTH_VERIFY_URL, { code }, { withCredentials: true });
 
-                const { access_token, refresh_token } = response.data.data;
+                const { access_token } = response.data.data;
 
                 if (!access_token) {
                      throw new Error("Access token not received from OAuth login.");
                 }
 
-                this.setTokens({ accessToken: access_token, refreshToken: refresh_token });
-
+                this.setAccessToken(access_token);
                 return true;
 
             } catch (error: any) {
@@ -79,35 +67,26 @@ export const useAuthStore = defineStore('auth', {
 
         async refresh(): Promise<string> {
             if (this.isRefreshing) {
-                console.log("AuthStore: Refresh already in progress, adding request to queue.");
+                console.debug("AuthStore: Refresh already in progress, adding request to queue.");
                 return new Promise<string>(resolve => {
                     this.addRefreshSubscriber(resolve);
                 });
             }
 
-            if (!this.refreshToken) {
-                console.warn('AuthStore: No refresh token available.');
-                this.logout();
-                return Promise.reject(new Error('No refresh token'));
-            }
-
             this.isRefreshing = true;
-            console.log("AuthStore: Attempting token refresh via plain axios");
+            console.debug("AuthStore: Attempting token refresh via plain axios");
 
             try {
-                const response = await axios.post(REFRESH_URL, {
-                     refreshToken: this.refreshToken,
-                });
+                const response = await axios.post(REFRESH_URL, {}, { withCredentials: true });
 
-                const { access_token, refresh_token: new_refresh_token } = response.data.data;
+                const { access_token } = response.data.data;
 
                 if (!access_token) {
                     throw new Error("Access token not received from refresh endpoint.");
                 }
 
-                console.log("AuthStore: Token refresh successful.");
-                this.setTokens({ accessToken: access_token, refreshToken: new_refresh_token || this.refreshToken });
-
+                console.debug("AuthStore: Token refresh successful.");
+                this.setAccessToken(access_token);
                 this.onRefreshSuccess(access_token);
 
                 return access_token;
@@ -123,34 +102,35 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async logout() {
-            console.log("AuthStore: Initiating logout process.");
+            console.debug("AuthStore: Initiating logout process.");
             if (this.accessToken) {
                  try {
-                     console.log("AuthStore: Calling backend logout endpoint (using plain axios)");
+                     console.debug("AuthStore: Calling backend logout endpoint (using plain axios)");
                     await axios.post(LOGOUT_URL, {}, {
                         headers: {
                             'Authorization': `Bearer ${this.accessToken}`
-                        }
+                        },
+                        withCredentials: true,
                      });
                  } catch (error: any) {
-                     console.warn('AuthStore: Backend logout API call failed:', error.response?.data || error.message);
+                     console.debug('AuthStore: Backend logout API call failed:', error.response?.data || error.message);
                  }
             }
 
             this.clearTokens();
-            console.log("AuthStore: Frontend logout complete. Navigation should be handled by caller.");
+            console.debug("AuthStore: Frontend logout complete. Navigation should be handled by caller.");
         },
 
         addRefreshSubscriber(callback: (newAccessToken: string) => void) {
             this.refreshSubscribers.push(callback);
         },
         onRefreshSuccess(newAccessToken: string) {
-            console.log("AuthStore: Notifying refresh subscribers about success.");
+            console.debug("AuthStore: Notifying refresh subscribers about success.");
             this.refreshSubscribers.forEach((callback: (newAccessToken: string) => void) => callback(newAccessToken));
             this.refreshSubscribers = [];
         },
          onRefreshError(error: any) {
-            console.log("AuthStore: Notifying refresh subscribers about failure.");
+            console.debug("AuthStore: Notifying refresh subscribers about failure.");
              this.refreshSubscribers = [];
          }
     },
