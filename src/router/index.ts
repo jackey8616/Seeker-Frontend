@@ -53,7 +53,7 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: "/job-fitting/:job_id",
+      path: "/job-fitting/:job_id/:expand_chat_log_id?",
       name: "job-fitting",
       component: () => import("../views/JobFittingView.vue"),
       props: true,

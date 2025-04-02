@@ -13,6 +13,7 @@ interface Metrics {
 }
 
 export interface AiChatLog {
+    id: string
     executor_id: string
     conversation_id: string
     input: string
@@ -83,4 +84,11 @@ export interface Mail {
   date: string;
   detailMail?: any;
   extracted_data?: string;
+}
+
+export interface FittingResponse {
+  job_id: string;
+  chat_log_id: string;
+  link: string;
+  ai_response: string;
 }

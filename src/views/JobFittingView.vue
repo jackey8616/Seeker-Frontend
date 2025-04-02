@@ -3,14 +3,17 @@ import { inject, ref, onMounted } from 'vue';
 
 import type ApiClient from '@/composables/apiClient';
 import type { ApiResponseDto, Job, JobResponse } from '@/type';
-import { useDate } from 'vuetify';
 import ChatLogDetail from '@/components/ChatLogDetail.vue';
+import { useDate } from 'vuetify';
+
 const apiClient = inject('apiClient') as ApiClient;
-const props = defineProps<{ job_id: string }>()
 const date = useDate()
+const props = defineProps<{ job_id: string; expand_chat_log_id?: string; }>()
 
 const job = ref<Job | null>(null)
 const tabId = ref(0)
+const expand_job = ref<string[]>([])
+const expand_chat_logs = ref<string[]>([])
 const invoke_debounce = ref(false)
 const restriction = ref('')
 const resume = ref('')
@@ -43,6 +46,10 @@ async function invoke_ai(job: Job) {
 
 onMounted(() => {
   fetchJob(props.job_id)
+  if (props.expand_chat_log_id) {
+    expand_job.value.push('chat_logs')
+    expand_chat_logs.value.push(props.expand_chat_log_id)
+  }
 })
 </script>
 
@@ -72,8 +79,8 @@ onMounted(() => {
             {{ job.location }}
           </div>
           <v-divider class="my-4"></v-divider>
-          <v-expansion-panels>
-            <v-expansion-panel>
+          <v-expansion-panels v-model="expand_job">
+            <v-expansion-panel value="description">
                 <v-expansion-panel-title>
                 <strong>Description</strong>
                 </v-expansion-panel-title>
@@ -82,26 +89,32 @@ onMounted(() => {
                 </v-expansion-panel-text>
             </v-expansion-panel>
 
-          <v-expansion-panel>
-            <v-expansion-panel-title>
-              <strong>Chat Logs</strong>
-              <template #actions>
-                <v-chip size="small" class="ml-2">{{ job.chat_logs?.length || 0 }} conversations</v-chip>
-              </template>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <div v-if="job.chat_logs && job.chat_logs.length > 0">
-                <div v-for="(chat, index) in job.chat_logs" :key="index" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-                  <ChatLogDetail :chat="chat" />
-                </div>
-              </div>
-              <div v-else class="text-center py-4 text-grey">
-                <v-icon size="large" class="mb-2">mdi-chat-outline</v-icon>
-                <div>No chat logs available</div>
-              </div>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-            <v-expansion-panel>
+            <v-expansion-panel value="chat_logs">
+              <v-expansion-panel-title>
+                <strong>Chat Logs</strong>
+                <template #actions>
+                  <v-chip size="small" class="ml-2">{{ job.chat_logs?.length || 0 }} conversations</v-chip>
+                </template>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-expansion-panels v-model="expand_chat_logs" >
+                  <v-expansion-panel
+                    v-for="(chat, index) in job.chat_logs"
+                    :key="index"
+                    :value="chat.id"
+                  >
+                    <v-expansion-panel-title>
+                      <v-chip size="small" color="primary" class="mr-2">
+                        {{ date.format(chat.start_datetime, 'keyboardDateTime24h') }}
+                      </v-chip>
+                      <strong>Conversation {{ index + 1 }}</strong>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <ChatLogDetail :chat="chat" :expand="chat.id" />
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card-text>
