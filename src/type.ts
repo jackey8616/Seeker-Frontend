@@ -93,3 +93,27 @@ export interface FittingResponse {
   link: string;
   ai_response: string;
 }
+
+
+export interface ModelQuota {
+    name: string
+    remaining_amount: number
+    maximum_amount: number
+}
+
+export interface ExecutionCount {
+    total_count: number;
+    nearest_execution_datetimes: Date[];
+    last_execution_datetime?: Date;
+    remaining_quotas: Record<string, ModelQuota[]>;
+}
+
+export interface UserInfo {
+  name: string;
+  avatar_url?: string;
+  execution_count: ExecutionCount;
+}
+
+export interface UserInfoResponse {
+  userinfo: UserInfo;
+}
