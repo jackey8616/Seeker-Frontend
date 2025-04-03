@@ -84,6 +84,7 @@ export interface Mail {
   date: string;
   detailMail?: any;
   extracted_data?: string;
+  read?: boolean;
 }
 
 export interface FittingResponse {

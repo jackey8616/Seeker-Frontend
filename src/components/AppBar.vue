@@ -52,7 +52,7 @@ const handleLogout = () => {
         value="jobs"
         active-color="primary"
       >
-        Job
+        Jobs
       </v-btn>
 
       <v-btn

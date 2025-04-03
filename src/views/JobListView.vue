@@ -16,10 +16,7 @@ const headers = ref([
   { title: 'CreatedAt', text: 'CreateTime', value: 'created_at', sortable: true, width: '180px'},
   { title: 'UpdatedAt', text: 'UpdateTime', value: 'updated_at', sortable: true, width: '180px'},
 ])
-const sortBy = ref([{
-  "key": 'updated_at',
-  "order": 'desc',
-}])
+
 const jobs = ref<Job[]>([])
 const currentPage = ref(1)
 const previousToken = ref<string | null>()

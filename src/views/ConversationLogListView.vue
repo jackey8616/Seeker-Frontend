@@ -5,15 +5,6 @@ import type { ApiResponseDto, ConversationLogResponse, AiConversationLog } from 
 import ConversationLogDetailDialog from '@/components/ConversationLogDetailDialog.vue'
 import type ApiClient from '@/composables/apiClient';
 
-interface ConversationLog {
-  _id: string;
-  model_name: string;
-  total_input_token: number;
-  total_output_token: number;
-  created_at: string;
-  updated_at: string | null;
-}
-
 const apiClient = inject('apiClient') as ApiClient;
 const date = useDate()
 
@@ -25,7 +16,7 @@ const headers = [
   { title: 'UpdateTime', key: 'updated_at', sortable: true },
 ]
 
-const logs = ref<ConversationLog[]>([])
+const logs = ref<AiConversationLog[]>([])
 const loading = ref(false)
 const totalItems = ref(100)
 const currentPage = ref(1)

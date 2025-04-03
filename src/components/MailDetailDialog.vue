@@ -2,19 +2,10 @@
 import { useDate } from 'vuetify'
 import { inject } from 'vue'
 import ApiClient from '@/composables/apiClient'
+import type { Mail } from '@/type';
 
 const apiClient = inject('apiClient') as ApiClient;
 const date = useDate()
-
-interface Mail {
-  id: string;
-  sender: string;
-  title: string;
-  date: string;
-  detailMail?: any;
-  extracted_data?: string;
-  read?: boolean;
-}
 
 const props = defineProps<{
   modelValue: boolean;
