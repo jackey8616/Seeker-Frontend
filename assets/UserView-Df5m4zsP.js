@@ -1,1 +1,0 @@
-import{d as s,g as o,h as i,i as l,c as r,e as c,b as p,t as u,o as d}from"./index-Dw6YUOGV.js";const _=s({__name:"UserView",setup(m){const n=l("apiClient"),e=o("");return i(async()=>{const a=await n.client.get("/users/info");e.value=a.data.name}),(a,t)=>(d(),r("div",null,[t[0]||(t[0]=c("Hello ")),p("b",null,u(e.value),1)]))}});export{_ as default};
