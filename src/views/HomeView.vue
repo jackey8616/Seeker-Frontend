@@ -124,6 +124,7 @@ const handleDialogSubmit = async () => {
                   Currently we takes following platform's job:
                   <ul>
                     <li>Seek(Au)</li>
+                    <li>Cake</li>
                   </ul>
                   <v-form @submit.prevent="handleDialogSubmit">
                     <v-text-field
