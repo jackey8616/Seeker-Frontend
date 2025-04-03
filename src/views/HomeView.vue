@@ -2,12 +2,16 @@
 import type ApiClient from '@/composables/apiClient';
 import { useAuthStore } from '@/stores/auth';
 import type { ApiResponseDto, FittingResponse } from '@/type';
+import type { AxiosError } from 'axios';
 import { inject, ref } from 'vue';
 
 const apiClient = inject('apiClient') as ApiClient;
 const authStore = useAuthStore()
 
 const showDialog = ref(false)
+const invoke_debounce = ref(false)
+const showErrorSnackbar = ref(false)
+const errorMessage = ref('')
 const formData = ref({
   url: '',
   restriction: '',
@@ -49,8 +53,24 @@ const extractResponse = async (response: string, key: string) => {
 
 const handleDialogSubmit = async () => {
   try {
-    const { data }: ApiResponseDto<FittingResponse> = await apiClient.client.post('/jobs/fitting_by_ai/url', formData.value,)
+    invoke_debounce.value = true
+    const { data }: ApiResponseDto<FittingResponse> = await apiClient.client
+      .post('/jobs/fitting_by_ai/url', formData.value)
       .then(response => response.data)
+      .catch((error: AxiosError) => {
+        switch (error.status) {
+          case 429:
+            let aiRemainingCount = (error.response?.data as any).ai
+            let errorMessage = 'Too many requests. Please try again later.\n'
+            errorMessage += 'AI remaining count:\n'
+            errorMessage += `Hourly: ${aiRemainingCount.hourly}\n`
+            errorMessage += `Daily: ${aiRemainingCount.daily}\n`
+            errorMessage += `Monthly: ${aiRemainingCount.monthly}\n`
+            throw new Error(errorMessage)
+          default:
+            throw error;
+        }
+      })
 
     result.value = data
     // Extract and update the values when we get the response
@@ -60,8 +80,11 @@ const handleDialogSubmit = async () => {
       extractedNegativeComment.value = await extractResponse(result.value.ai_response, 'negative-comment')
       extractedFitRate.value = await extractResponse(result.value.ai_response, 'fit-rate')
     }
-  } catch (error) {
-    console.error('Error submitting:', error)
+  } catch (error: any) {
+    errorMessage.value = error.message.replace(/\n/g, '<br>')
+    showErrorSnackbar.value = true
+  } finally {
+    invoke_debounce.value = false
   }
 }
 </script>
@@ -159,7 +182,7 @@ const handleDialogSubmit = async () => {
                       <v-btn
                         color="primary"
                         @click="handleDialogSubmit"
-                        :disabled="!formData.url || !formData.restriction || !formData.resume"
+                        :disabled="!formData.url || !formData.restriction || !formData.resume || invoke_debounce"
                       >{{ result == null ? 'Start Match' : 'Match Again' }}</v-btn>
                     </v-col>
                     <v-col v-if="result != null" cols="12">
@@ -222,6 +245,28 @@ const handleDialogSubmit = async () => {
       </v-col>
     </v-row>
   </div>
+
+  <v-snackbar
+    v-model="showErrorSnackbar"
+    :timeout="3000"
+    color="error"
+    location="top"
+    multi-line
+    vertical
+  >
+    <template v-slot:text>
+      <p v-html="errorMessage"></p>
+    </template>
+    <template v-slot:actions>
+      <v-btn
+        color="white"
+        variant="text"
+        @click="showErrorSnackbar = false"
+      >
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <style scoped>
