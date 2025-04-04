@@ -16,6 +16,28 @@ function randomColor() {
   return `rgb(${r()}, ${r()}, ${r()})`;
 }
 
+function barColor(remaining_amount: number, maximum_amount: number) {
+  const percentage = remaining_amount / maximum_amount * 100
+  if (percentage > 50) {
+    return 'green-darken-3'
+  } else if (percentage > 20) {
+    return 'yellow-darken-3'
+  } else {
+    return 'red-darken-3'
+  }
+}
+
+function barTextColor(remaining_amount: number, maximum_amount: number) {
+  const percentage = remaining_amount / maximum_amount * 100
+  if (percentage > 50) {
+    return 'text-green-darken-3'
+  } else if (percentage > 20) {
+    return 'text-yellow-darken-3'
+  } else {
+    return 'text-red-darken-3'
+  }
+}
+
 onMounted(async () => {
   const { data }: ApiResponseDto<UserInfoResponse> = await apiClient.client.get(`/users/info`)
     .then(({ data }) => data)
@@ -49,14 +71,14 @@ onMounted(async () => {
             <div v-for="quota in remainQuota?.ai" :key="quota.name">
               {{ quota.name }}
               <v-progress-linear
-                color="green-darken-3"
+                :color="barColor(quota.remaining_amount, quota.maximum_amount)"
                 height="8"
                 :model-value="quota.remaining_amount / quota.maximum_amount * 100"
                 rounded="lg"
                 striped
               />
               <div class="d-flex justify-space-between py-1">
-                <span class="text-green-darken-3 font-weight-medium">
+                <span :class="['font-weight-medium', barTextColor(quota.remaining_amount, quota.maximum_amount)]">
                   {{ quota.remaining_amount }}
                 </span>
 

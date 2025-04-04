@@ -60,12 +60,12 @@ const handleDialogSubmit = async () => {
       .catch((error: AxiosError) => {
         switch (error.status) {
           case 429:
-            let aiRemainingCount = (error.response?.data as any).ai
+            let aiRemainingCount = (error.response?.data as any).quotas
             let errorMessage = 'Too many requests. Please try again later.\n'
             errorMessage += 'AI remaining count:\n'
-            errorMessage += `Hourly: ${aiRemainingCount.hourly}\n`
-            errorMessage += `Daily: ${aiRemainingCount.daily}\n`
-            errorMessage += `Monthly: ${aiRemainingCount.monthly}\n`
+            for (const quota of aiRemainingCount) {
+              errorMessage += `${quota.name}: ${quota.remaining_amount}\n`
+            }
             throw new Error(errorMessage)
           default:
             throw error;
