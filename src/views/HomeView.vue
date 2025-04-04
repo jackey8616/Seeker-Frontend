@@ -2,9 +2,11 @@
 import type ApiClient from '@/composables/apiClient';
 import { useAuthStore } from '@/stores/auth';
 import type { ApiResponseDto, FittingResponse } from '@/type';
+import { useGtm } from '@gtm-support/vue-gtm';
 import type { AxiosError } from 'axios';
 import { inject, ref } from 'vue';
 
+const gtm = useGtm()
 const apiClient = inject('apiClient') as ApiClient;
 const authStore = useAuthStore()
 
@@ -71,6 +73,12 @@ const handleDialogSubmit = async () => {
             throw error;
         }
       })
+      .finally(() => {
+        gtm?.push({
+          event: 'InvokeAi-JobMatch',
+          ai_invoke_type: 'job_match',
+        });
+      });
 
     result.value = data
     // Extract and update the values when we get the response

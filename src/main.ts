@@ -38,8 +38,7 @@ app.provide('apiClient', apiClient)
 
 app.use(createGtm({
   id: 'GTM-K62VSLXT',
-  enabled: import.meta.env.PROD,
-  debug: import.meta.env.DEV,
+  enabled: true,
   vueRouter: router,
 }))
 app.use(vuetify)
