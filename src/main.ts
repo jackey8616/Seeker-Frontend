@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { createGtm } from '@gtm-support/vue-gtm';
 
 // Vuetify
 import 'vuetify/styles'
@@ -35,6 +36,12 @@ const app = createApp(App);
 app.provide('endpoint', endpoint)
 app.provide('apiClient', apiClient)
 
+app.use(createGtm({
+  id: 'GTM-K62VSLXT',
+  enabled: import.meta.env.PROD,
+  debug: import.meta.env.DEV,
+  vueRouter: router,
+}))
 app.use(vuetify)
 app.use(createPinia());
 app.use(router);
